@@ -38,8 +38,9 @@ FUNCTIONS.append(cmult)
 
 def inv(x, y, p):
     value = 1.0 / x
-    value[x == np.inf] = 0
-    value[x == -np.inf] = 0
+    if is_numpy_array(x):
+        value[x == np.inf] = 0
+        value[x == -np.inf] = 0
     return value
 FUNCTIONS.append(inv)
 
@@ -72,7 +73,7 @@ def sqrtxy(x, y, p):
 FUNCTIONS.append(sqrtxy)
 
 def acos(x, y, p):
-    return np.arcos(x) / np.pi
+    return np.arccos(x) / np.pi
 FUNCTIONS.append(acos)
 
 def asin(x, y, p):
@@ -255,11 +256,11 @@ def reverse(x, y, p):
 FUNCTIONS.append(reverse)
 
 def push_back(x, y, p):
-    return np.concatenate(numpy.array(x).flatten(), numpy.array(y).flatten())
+    return np.append(np.array(x).flatten(), np.array(y).flatten())
 FUNCTIONS.append(push_back)
 
 def push_back2(x, y, p):
-    return np.concatenate(numpy.array(y).flatten(), numpy.array(x).flatten())
+    return np.append(np.array(y).flatten(), np.array(x).flatten())
 FUNCTIONS.append(push_back2)
 
 # TODO set(x, y, p)
@@ -284,16 +285,19 @@ def const(x, y, p):
 FUNCTIONS.append(const)
 
 def constvectord(x, y, p):
-    return np.full(x.shape, p)
+    return np.full(np.array(x).shape, p)
 FUNCTIONS.append(constvectord)
 
 def zeros(x, y, p):
-    return np.zeros(x.shape)
+    return np.zeros(np.array(x).shape)
 FUNCTIONS.append(zeros)
 
 def ones(x, y, p):
-    return np.ones(x.shape)
+    return np.ones(np.array(x).shape)
 FUNCTIONS.append(ones)
+
+
+FUNCTIONS_LEN = len(FUNCTIONS)
 
 
 
