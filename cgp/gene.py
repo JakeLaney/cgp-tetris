@@ -50,10 +50,12 @@ class Gene:
 
     def evaluate(self, x, y, p):
         function = self.get_function()
-        self.output = p * function(x, y, p)
+        self.output = self.constrain_result(p * function(x, y, p))
 
     def constrain_result(self, result):
-        return np.array(map(self.constrain_bounds, np.array(result)))
+        arr = np.array(result)
+        result = np.array(map(self.constrain_bounds, arr.flatten()))
+        return result.reshape(arr.shape)
 
     def constrain_bounds(self, e):
         if (e > 1.0):

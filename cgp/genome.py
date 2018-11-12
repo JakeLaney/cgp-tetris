@@ -41,7 +41,10 @@ class Genome:
 
         result = []
         for outputIndex in self.outputs:
-            result.append(np.mean(self.genes[outputIndex].output))
+            output = self.genes[outputIndex].output
+            if np.array(output).size == 0:
+                output = 0
+            result.append(np.mean(output))
         return result
 
     def functionGeneXRange(self):
