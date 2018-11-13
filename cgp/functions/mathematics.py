@@ -43,12 +43,16 @@ FUNCTIONS.append(cmult)
 
 
 def inv(x, y, p):
-    value = 1.0 / x
     if is_numpy_array(x):
+        value = 1.0 / x
         value[x == np.inf] = 0
         value[x == -np.inf] = 0
-    return value
-
+        return value
+    else:
+        if x == 0:
+            return 0
+        else:
+            return 1.0 / x
 
 FUNCTIONS.append(inv)
 
