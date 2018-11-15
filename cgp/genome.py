@@ -2,8 +2,8 @@
 import config
 import random
 
-from gene import Gene
-from outputs import Outputs
+from cgp.gene import Gene
+from cgp.outputs import Outputs
 import numpy as np
 
 class Genome:
@@ -13,10 +13,10 @@ class Genome:
         self.len = config.GENOME_SIZE
         self.init_genes(config, functionSet)
         self.outputs = Outputs(config)
-    
+
     def init_genes(self, config, functionSet):
         self.genes = []
-        for i in xrange(self.len):
+        for i in range(self.len):
             self.genes.append(Gene(config, functionSet, i))
 
     def evaluate(self, *inputValues):
@@ -29,10 +29,10 @@ class Genome:
             self.genes[inputIdx].init_as_input_gene(input)
 
     def evaluate_function_genes(self):
-        for i in self.functionGeneXRange():
+        for i in self.functionGenerange():
             self.genes[i].prepare_for_evaluation()
-        
-        for i in self.functionGeneXRange():
+
+        for i in self.functionGenerange():
             gene = self.genes[i]
             xOutput = self.genes[gene.get_x()].output
             yOutput = self.genes[gene.get_y()].output
@@ -47,7 +47,5 @@ class Genome:
             result.append(np.mean(output))
         return result
 
-    def functionGeneXRange(self):
-        return xrange(self.functionGeneStartIdx, self.len)
-
-        
+    def functionGenerange(self):
+        return range(self.functionGeneStartIdx, self.len)

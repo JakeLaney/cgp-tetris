@@ -1,3 +1,4 @@
+#!/usr/local/bin/python3
 
 from config import Config
 from cgp.functionset import FunctionSet
@@ -16,9 +17,9 @@ def main():
     r = numpy.random.rand(SIZE, SIZE)
     g = numpy.random.rand(SIZE, SIZE)
     b = numpy.random.rand(SIZE, SIZE)
-    print 'start...'
+    print('start...')
     genome = Genome(config, functionSet)
-    print np.max(genome.evaluate(r, g, b))
+    print(genome.evaluate(r, g, b))
 
 if __name__ == '__main__':
     main()

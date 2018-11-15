@@ -9,16 +9,16 @@ class Outputs():
 
     def init_outputs(self):
         self.outputs = []
-        for _ in xrange(self.len):
+        for _ in range(self.len):
             self.outputs.append(self.random_genome_index())
-    
+
     def random_genome_index(self):
         randValue = uniform(0.0, 1.0)
         index = int(round(randValue * (self.genomeSize - 1)))
         return index
 
     def mutate(self):
-        pass # TODO 
+        pass # TODO
 
     def __getitem__(self, index):
         return self.outputs[index]
@@ -28,5 +28,3 @@ class Outputs():
 
     def __iter__(self):
         return self.outputs.__iter__()
-
-        
