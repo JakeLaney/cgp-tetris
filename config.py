@@ -1,21 +1,20 @@
 
 class Config():
     # The number of input genes
-    INPUTS = 3
+    inputs = 3
 
     # The number of output genes
-    OUTPUTS = 10
+    outputs = 10
 
     # The number of function genes
-    FUNCTION_GENES = 40
+    function_genes = 40
 
     # The size of the genome
-    GENOME_SIZE = INPUTS + FUNCTION_GENES
+    genome_size = self.inputs + self.function_genes
 
     # evolution hyperparameters
-    INPUT_SCALAR_R = 0.1
-    CHILDREN_PER_GENERATION = 9
-    GENES_MUTATED_FRACTION = 0.1
-    OUTPUTS_MUTATED_FRACTION = 0.6
-    GENERATIONS = 10 
-
+    input_scalar_r = 0.1
+    children_per_generations = 9
+    genes_mutated = 0.1
+    outputs_mutated = 0.6
+    generations = 10

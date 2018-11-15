@@ -14,10 +14,10 @@ class Gene:
         self.fraction = self.n / float(config.GENOME_SIZE + config.INPUTS)
         self.output = 0
         self.mutate()
-    
+
     def rand(self):
         return uniform(0.0, 1.0)
-    
+
     def mutate(self):
         self.x = self.rand()
         self.y = self.rand()
@@ -25,19 +25,19 @@ class Gene:
         self.p = self.rand()
 
     def randIndex(self, array):
-        return randint(0, len(array) - 1)   
+        return randint(0, len(array) - 1)
 
     def get_x(self):
         fraction = self.n / float(self.totalGenes)
         return int(floor(self.x * ((1 - fraction) * self.scalar + fraction)))
 
-    def get_y(self):   
+    def get_y(self):
         fraction = self.n / float(self.totalGenes)
         return int(floor(self.x * ((1 - fraction) * self.scalar + fraction)))
-    
+
     def get_p(self):
         return (2.0 * self.p) - 1
-        
+
     def get_function(self):
         index = int(round(self.f * (self.functionSetLen - 1)))
         return self.functionSet[index]
@@ -53,9 +53,12 @@ class Gene:
         self.output = self.constrain_result(p * function(x, y, p))
 
     def constrain_result(self, result):
-        arr = np.array(result)
-        result = np.array(map(self.constrain_bounds, arr.flatten()))
-        return result.reshape(arr.shape)
+        arr = np.copy(result)
+        oldshape = arr.shape
+        arr = arr.flatten()
+        for i in range(arr.size):
+            arr[i] = self.constrain_bounds(arr[i])
+        return arr.reshape(oldshape)
 
     def constrain_bounds(self, e):
         if (e > 1.0):
@@ -64,11 +67,3 @@ class Gene:
             return -1.0
         else:
             return e
-        
-    
-   
-
-
-
-    
-

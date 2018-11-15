@@ -1,8 +1,8 @@
 import numpy as np
 import scipy.stats
 
-from support import is_numpy_array
-from support import minimum_shape
+from cgp.functions.support import is_numpy_array
+from cgp.functions.support import minimum_shape
 
 FUNCTIONS = []
 

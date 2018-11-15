@@ -1,16 +1,16 @@
 
-import functions.mathematics
-import functions.comparison
-import functions.lists
-import functions.statistics
+import cgp.functions.mathematics
+import cgp.functions.comparison
+import cgp.functions.lists
+import cgp.functions.statistics
 
 class FunctionSet():
     def __init__(self):
         self.functions = []
-        self.functions += functions.mathematics.FUNCTIONS
-        self.functions += functions.lists.FUNCTIONS
-        self.functions += functions.comparison.FUNCTIONS
-        self.functions += functions.statistics.FUNCTIONS
+        self.functions += cgp.functions.mathematics.FUNCTIONS
+        self.functions += cgp.functions.lists.FUNCTIONS
+        self.functions += cgp.functions.comparison.FUNCTIONS
+        self.functions += cgp.functions.statistics.FUNCTIONS
 
     def __getitem__(self, index):
         return self.functions[index]
