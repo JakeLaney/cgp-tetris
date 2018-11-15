@@ -8,10 +8,10 @@ class Gene:
     def __init__(self, config, functionSet, index):
         self.functionSet = functionSet
         self.functionSetLen = len(functionSet)
-        self.scalar = config.INPUT_SCALAR_R
-        self.totalGenes = config.GENOME_SIZE + config.INPUTS
+        self.scalar = config.inputScalarR
+        self.totalGenes = config.genomeSize
         self.n = index
-        self.fraction = self.n / float(config.GENOME_SIZE + config.INPUTS)
+        self.fraction = self.n / float(config.genomeSize + config.inputs)
         self.output = 0
         self.mutate()
 
@@ -53,12 +53,12 @@ class Gene:
         self.output = self.constrain_result(p * function(x, y, p))
 
     def constrain_result(self, result):
-        arr = np.copy(result)
-        oldshape = arr.shape
-        arr = arr.flatten()
-        for i in range(arr.size):
-            arr[i] = self.constrain_bounds(arr[i])
-        return arr.reshape(oldshape)
+        constrainedResult = np.array(result)
+        originalShape = constrainedResult.shape
+        constrainedResult = constrainedResult.flatten()
+        for i in range(constrainedResult.size):
+            constrainedResult[i] = self.constrain_bounds(constrainedResult[i])
+        return constrainedResult.reshape(originalShape)
 
     def constrain_bounds(self, e):
         if (e > 1.0):

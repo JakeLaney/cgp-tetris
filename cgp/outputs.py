@@ -1,10 +1,11 @@
 
 from random import uniform
+from random import random
 
 class Outputs():
     def __init__(self, config):
-        self.len = config.OUTPUTS
-        self.genomeSize = config.GENOME_SIZE
+        self.len = config.outputs
+        self.genomeSize = config.genomeSize
         self.init_outputs()
 
     def init_outputs(self):
@@ -18,7 +19,9 @@ class Outputs():
         return index
 
     def mutate(self):
-        pass # TODO
+        for i in range(self.len):
+            if random() < 0.6:
+                self.outputs[i] = self.random_genome_index()
 
     def __getitem__(self, index):
         return self.outputs[index]

@@ -2,15 +2,17 @@
 import config
 import random
 
+import copy
+
 from cgp.gene import Gene
 from cgp.outputs import Outputs
 import numpy as np
 
 class Genome:
     def __init__(self, config, functionSet):
-        self.inputCount = config.INPUTS
-        self.functionGeneStartIdx  = config.INPUTS
-        self.len = config.GENOME_SIZE
+        self.inputCount = config.inputs
+        self.functionGeneStartIdx  = config.inputs
+        self.len = config.genomeSize
         self.init_genes(config, functionSet)
         self.outputs = Outputs(config)
 
@@ -49,3 +51,13 @@ class Genome:
 
     def functionGenerange(self):
         return range(self.functionGeneStartIdx, self.len)
+
+    def get_child(self):
+        child = copy.deepcopy(self)
+        self.mutate_four_nodes(child)
+        child.outputs.mutate()
+        return child
+
+    def mutate_four_nodes(self, child):
+        for gene in random.sample(child.genes, 4):
+            gene.mutate()

@@ -11,6 +11,7 @@ class FunctionSet():
         self.functions += cgp.functions.lists.FUNCTIONS
         self.functions += cgp.functions.comparison.FUNCTIONS
         self.functions += cgp.functions.statistics.FUNCTIONS
+        print('Function set size: ', len(self.functions))
 
     def __getitem__(self, index):
         return self.functions[index]
