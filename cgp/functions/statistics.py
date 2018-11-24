@@ -5,6 +5,8 @@ from cgp.functions.support import is_numpy_array
 from cgp.functions.support import minimum_shape
 
 FUNCTIONS =[]
+FUNC_DESCRIPTIONS = []
+
 
 def stddev(x, y, p):
     if not is_numpy_array(x):
@@ -14,6 +16,7 @@ def stddev(x, y, p):
 
 
 FUNCTIONS.append(stddev)
+FUNC_DESCRIPTIONS.append('STDDEV')
 
 
 def skew(x, y, p):
@@ -24,6 +27,7 @@ def skew(x, y, p):
 
 
 FUNCTIONS.append(skew)
+FUNC_DESCRIPTIONS.append('SKEW')
 
 
 def kurtosis(x, y, p):
@@ -34,6 +38,7 @@ def kurtosis(x, y, p):
 
 
 FUNCTIONS.append(kurtosis)
+FUNC_DESCRIPTIONS.append('KURTOSIS')
 
 
 def mean(x, y, p):
@@ -41,6 +46,7 @@ def mean(x, y, p):
 
 
 FUNCTIONS.append(mean)
+FUNC_DESCRIPTIONS.append('MEAN')
 
 
 def f_range(x, y, p):
@@ -51,6 +57,7 @@ def f_range(x, y, p):
 
 
 FUNCTIONS.append(f_range)
+FUNC_DESCRIPTIONS.append('RANGE')
 
 
 def f_round(x, y, p):
@@ -58,6 +65,7 @@ def f_round(x, y, p):
 
 
 FUNCTIONS.append(f_round)
+FUNC_DESCRIPTIONS.append('ROUND')
 
 
 def f_floor(x, y, p):
@@ -65,6 +73,7 @@ def f_floor(x, y, p):
 
 
 FUNCTIONS.append(f_floor)
+FUNC_DESCRIPTIONS.append('FLOOR')
 
 
 def max1(x, y, p):
@@ -72,6 +81,7 @@ def max1(x, y, p):
 
 
 FUNCTIONS.append(max1)
+FUNC_DESCRIPTIONS.append('MAX1')
 
 
 def min1(x, y, p):
@@ -79,3 +89,4 @@ def min1(x, y, p):
 
 
 FUNCTIONS.append(min1)
+FUNC_DESCRIPTIONS.append('MIN1')

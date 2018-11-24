@@ -5,6 +5,7 @@ from cgp.functions.support import is_numpy_array
 from cgp.functions.support import minimum_shape
 
 FUNCTIONS = []
+FUNC_DESCRIPTIONS = []
 
 def split_before(x, y, p):
     if not is_numpy_array(x):
@@ -15,6 +16,7 @@ def split_before(x, y, p):
 
 
 FUNCTIONS.append(split_before)
+FUNC_DESCRIPTIONS.append('SPLIT_BEFORE')
 
 
 def split_after(x, y, p):
@@ -27,6 +29,8 @@ def split_after(x, y, p):
 
 
 FUNCTIONS.append(split_after)
+FUNC_DESCRIPTIONS.append('SPLIT_AFTER')
+
 
 def range_in(x, y, p):
     if not is_numpy_array(x):
@@ -39,10 +43,11 @@ def range_in(x, y, p):
         return np.copy(x[start:end])
 
 
-# FUNCTIONS.append(range_in)
+FUNCTIONS.append(range_in)
+FUNC_DESCRIPTIONS.append('RANGE_IN')
+
 
 # TODO index_y
-
 def index_y(x, y, p):
     if not is_numpy_array(x):
         return x
@@ -53,6 +58,7 @@ def index_y(x, y, p):
 
 
 FUNCTIONS.append(index_y)
+FUNC_DESCRIPTIONS.append('INDEX_Y')
 
 
 def index_p(x, y, p):
@@ -65,6 +71,7 @@ def index_p(x, y, p):
 
 
 FUNCTIONS.append(index_p)
+FUNC_DESCRIPTIONS.append('INDEX_P')
 
 
 def vectorize(x, y, p):
@@ -75,6 +82,7 @@ def vectorize(x, y, p):
 
 
 FUNCTIONS.append(vectorize)
+FUNC_DESCRIPTIONS.append('VECTORIZE')
 
 
 def first(x, y, p):
@@ -85,6 +93,7 @@ def first(x, y, p):
 
 
 FUNCTIONS.append(first)
+FUNC_DESCRIPTIONS.append('FIRST')
 
 
 def f_last(x, y, p):
@@ -96,6 +105,7 @@ def f_last(x, y, p):
 
 
 FUNCTIONS.append(f_last)
+FUNC_DESCRIPTIONS.append('LAST')
 
 # TODO differences
 # TODO avg_differences
@@ -109,6 +119,7 @@ def rotate(x, y, p):
 
 
 FUNCTIONS.append(rotate)
+FUNC_DESCRIPTIONS.append('ROTATE')
 
 
 def reverse(x, y, p):
@@ -119,6 +130,7 @@ def reverse(x, y, p):
 
 
 FUNCTIONS.append(reverse)
+FUNC_DESCRIPTIONS.append('REVERSE')
 
 
 def push_back(x, y, p):
@@ -126,6 +138,7 @@ def push_back(x, y, p):
 
 
 FUNCTIONS.append(push_back)
+FUNC_DESCRIPTIONS.append('PUSH_BACK')
 
 
 def push_back2(x, y, p):
@@ -133,6 +146,7 @@ def push_back2(x, y, p):
 
 
 FUNCTIONS.append(push_back2)
+FUNC_DESCRIPTIONS.append('PUSH_BACK2')
 
 # TODO set(x, y, p)
 
@@ -142,8 +156,9 @@ def sum(x, y, p):
 
 
 FUNCTIONS.append(sum)
+FUNC_DESCRIPTIONS.append('SUM')
 
-# TODO tranpose
+# TODO transpose
 # TODO vecfromdouble
 
 
@@ -152,6 +167,7 @@ def ywire(x, y, p):
 
 
 FUNCTIONS.append(ywire)
+FUNC_DESCRIPTIONS.append('YWIRE')
 
 
 def nop(x, y, p):
@@ -159,6 +175,7 @@ def nop(x, y, p):
 
 
 FUNCTIONS.append(nop)
+FUNC_DESCRIPTIONS.append('NOP')
 
 
 def const(x, y, p):
@@ -166,6 +183,7 @@ def const(x, y, p):
 
 
 FUNCTIONS.append(const)
+FUNC_DESCRIPTIONS.append('CONST')
 
 
 def constvectord(x, y, p):
@@ -173,6 +191,7 @@ def constvectord(x, y, p):
 
 
 FUNCTIONS.append(constvectord)
+FUNC_DESCRIPTIONS.append('CONSTVECTORD')
 
 
 def zeros(x, y, p):
@@ -180,6 +199,7 @@ def zeros(x, y, p):
 
 
 FUNCTIONS.append(zeros)
+FUNC_DESCRIPTIONS.append('ZEROS')
 
 
 def ones(x, y, p):
@@ -187,6 +207,7 @@ def ones(x, y, p):
 
 
 FUNCTIONS.append(ones)
+FUNC_DESCRIPTIONS.append('ONES')
 
 
 FUNCTIONS_LEN = len(FUNCTIONS)

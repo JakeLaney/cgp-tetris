@@ -5,6 +5,8 @@ from cgp.functions.support import is_numpy_array
 from cgp.functions.support import minimum_shape
 
 FUNCTIONS = []
+FUNC_DESCRIPTIONS = []
+
 
 def lt(x, y, p):
     if (is_numpy_array(x) and is_numpy_array(y)):
@@ -15,6 +17,7 @@ def lt(x, y, p):
 
 
 FUNCTIONS.append(lt)
+FUNC_DESCRIPTIONS.append('LT')
 
 
 def gt(x, y, p):
@@ -26,6 +29,7 @@ def gt(x, y, p):
 
 
 FUNCTIONS.append(gt)
+FUNC_DESCRIPTIONS.append('GT')
 
 
 def max2(x, y, p):
@@ -37,6 +41,7 @@ def max2(x, y, p):
 
 
 FUNCTIONS.append(max2)
+FUNC_DESCRIPTIONS.append('MAX2')
 
 
 def min2(x, y, p):
@@ -45,3 +50,8 @@ def min2(x, y, p):
         x = np.resize(x, newDim)
         y = np.resize(y, newDim)
     return np.minimum(x, y)
+
+
+# TODO: 'FUNCTIONS.append(min2)' was missing. is this on purpose?
+# FUNCTIONS.append(min2)
+# FUNC_DESCRIPTIONS.append('MIN2')
