@@ -38,7 +38,6 @@ FUNCTIONS.append(mult)
 def cmult(x, y, p):
     return x * p
 
-
 FUNCTIONS.append(cmult)
 
 

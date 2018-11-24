@@ -28,7 +28,6 @@ def split_after(x, y, p):
 
 FUNCTIONS.append(split_after)
 
-
 def range_in(x, y, p):
     if not is_numpy_array(x):
         return x
@@ -40,10 +39,9 @@ def range_in(x, y, p):
         return np.copy(x[start:end])
 
 
-FUNCTIONS.append(range_in)
+# FUNCTIONS.append(range_in)
 
 # TODO index_y
-
 
 def index_y(x, y, p):
     if not is_numpy_array(x):

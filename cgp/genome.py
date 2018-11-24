@@ -31,10 +31,11 @@ class Genome:
             self.genes[inputIdx].init_as_input_gene(input)
 
     def evaluate_function_genes(self):
-        for i in self.functionGenerange():
+
+        for i in self.functionGeneRange():
             self.genes[i].prepare_for_evaluation()
 
-        for i in self.functionGenerange():
+        for i in self.functionGeneRange():
             gene = self.genes[i]
             xOutput = self.genes[gene.get_x()].output
             yOutput = self.genes[gene.get_y()].output
@@ -47,9 +48,10 @@ class Genome:
             if np.array(output).size == 0:
                 output = 0
             result.append(np.mean(output))
+
         return result
 
-    def functionGenerange(self):
+    def functionGeneRange(self):
         return range(self.functionGeneStartIdx, self.len)
 
     def get_child(self):
@@ -61,3 +63,15 @@ class Genome:
     def mutate_four_nodes(self, child):
         for gene in random.sample(child.genes, 4):
             gene.mutate()
+
+    def save_to_file(self, path):
+        with open(path, 'w') as outputFile:
+            for gene in self.genes:
+                outputFile.write(str(gene.x))
+                outputFile.write(',')
+                outputFile.write(str(gene.y))
+                outputFile.write(',')
+                outputFile.write(str(gene.f))
+                outputFile.write(',')
+                outputFile.write(str(gene.p))
+                outputFile.write('\n')

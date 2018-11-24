@@ -29,18 +29,22 @@ class Gene:
 
     def get_x(self):
         fraction = self.n / float(self.totalGenes)
-        return int(floor(self.x * ((1 - fraction) * self.scalar + fraction)))
+        x = int(floor(self.x * ((1 - fraction) * self.scalar + fraction) * self.totalGenes))
+        return x
 
     def get_y(self):
         fraction = self.n / float(self.totalGenes)
-        return int(floor(self.x * ((1 - fraction) * self.scalar + fraction)))
+        return int(floor(self.y * ((1 - fraction) * self.scalar + fraction) * self.totalGenes))
 
     def get_p(self):
         return (2.0 * self.p) - 1
 
-    def get_function(self):
+    def get_f(self):
         index = int(round(self.f * (self.functionSetLen - 1)))
-        return self.functionSet[index]
+        return index
+
+    def get_function(self):
+        return self.functionSet[self.get_f()]
 
     def init_as_input_gene(self, inputValue):
         self.output = inputValue
