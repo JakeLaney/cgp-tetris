@@ -13,6 +13,8 @@ class Genome:
         self.inputCount = config.inputs
         self.functionGeneStartIdx  = config.inputs
         self.len = config.genomeSize
+        self.config = config
+        self.functionSet = functionSet
         self.init_genes(config, functionSet)
         self.outputs = Outputs(config)
 
@@ -75,3 +77,17 @@ class Genome:
                 outputFile.write(',')
                 outputFile.write(str(gene.p))
                 outputFile.write('\n')
+
+    def load_from_file(self, path):
+        with open(path, 'r') as inputFile:
+            self.genes = []
+            index = 0
+            for row in inputFile:
+                values = row.split(',')
+                gene = Gene(self.config, self.functionSet, index)
+                gene.x = values[0]
+                gene.y = values[1]
+                gene.f = values[2]
+                gene.p = values[3]
+                self.genes.append(gene)
+                index += 1

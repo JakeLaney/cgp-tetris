@@ -12,4 +12,3 @@ config.functionGenes = 40
 keyPresses = [False] * int(config.outputs / 2)
 
 elite = Genome(config, functionSet)
-elite.save_to_file('jake.out')
