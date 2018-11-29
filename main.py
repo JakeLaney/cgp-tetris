@@ -16,6 +16,8 @@ import matplotlib.pyplot as plt
 from tetris_learning_environment import Environment
 from tetris_learning_environment import Key
 
+from cgp import functional_graph
+
 FRAMES_TO_SKIP_AT_START = 75
 FRAMES_TO_SKIP_EACH_TURN = 60
 NUM_KEYS = 5
@@ -101,6 +103,9 @@ def main():
             print('Generation ' + str(generation + 1) + ' end, current best score = ', bestScore)
     print("FINISHED")
     print(bestScore)
+
+    graph = functional_graph.FunctionalGraph(elite)
+    graph.draw(0)
 
 
 if __name__ == '__main__':

@@ -15,6 +15,9 @@ class Gene:
         self.output = 0
         self.mutate()
 
+        # used in functionset.py to keep track of which genes have been used
+        self.active_in_functional_graph = False
+
     def rand(self):
         return uniform(0.0, 1.0)
 
@@ -26,6 +29,13 @@ class Gene:
 
     def randIndex(self, array):
         return randint(0, len(array) - 1)
+
+    # TODO: resolve issues with get_x, get_y returning zero
+    def getx(self):
+        return int(round(self.x * (self.totalGenes - 1)))
+
+    def gety(self):
+        return int(round(self.y * (self.totalGenes - 1)))
 
     def get_x(self):
         fraction = self.n / float(self.totalGenes)

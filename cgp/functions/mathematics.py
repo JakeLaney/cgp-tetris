@@ -5,6 +5,8 @@ from cgp.functions.support import is_numpy_array
 from cgp.functions.support import minimum_shape
 
 FUNCTIONS = []
+FUNC_DESCRIPTIONS = []
+
 
 def add(x, y, p):
     if (is_numpy_array(x) and is_numpy_array(y)):
@@ -12,7 +14,10 @@ def add(x, y, p):
         x = np.resize(x, newDim)
         y = np.resize(y, newDim)
     return x + y / 2.0
+
+
 FUNCTIONS.append(add)
+FUNC_DESCRIPTIONS.append('ADD')
 
 
 def aminus(x, y, p):
@@ -21,7 +26,10 @@ def aminus(x, y, p):
         x = np.resize(x, newDim)
         y = np.resize(y, newDim)
     return np.abs(x - y) / 2.0
+
+
 FUNCTIONS.append(aminus)
+FUNC_DESCRIPTIONS.append('AMINUS')
 
 
 def mult(x, y, p):
@@ -33,12 +41,15 @@ def mult(x, y, p):
 
 
 FUNCTIONS.append(mult)
+FUNC_DESCRIPTIONS.append('MULT')
 
 
 def cmult(x, y, p):
     return x * p
 
+
 FUNCTIONS.append(cmult)
+FUNC_DESCRIPTIONS.append('CMULT')
 
 
 def inv(x, y, p):
@@ -53,7 +64,9 @@ def inv(x, y, p):
         else:
             return 1.0 / x
 
+
 FUNCTIONS.append(inv)
+FUNC_DESCRIPTIONS.append('INV')
 
 
 def abs(x, y, p):
@@ -61,6 +74,7 @@ def abs(x, y, p):
 
 
 FUNCTIONS.append(abs)
+FUNC_DESCRIPTIONS.append('ABS')
 
 
 def sqrt(x, y, p):
@@ -68,6 +82,7 @@ def sqrt(x, y, p):
 
 
 FUNCTIONS.append(sqrt)
+FUNC_DESCRIPTIONS.append('SQRT')
 
 
 def cpow(x, y, p):
@@ -75,6 +90,7 @@ def cpow(x, y, p):
 
 
 FUNCTIONS.append(cpow)
+FUNC_DESCRIPTIONS.append('CPOW')
 
 
 def ypow(x, y, p):
@@ -82,6 +98,7 @@ def ypow(x, y, p):
 
 
 FUNCTIONS.append(ypow)
+FUNC_DESCRIPTIONS.append('YPOW')
 
 
 def expx(x, y, p):
@@ -89,6 +106,7 @@ def expx(x, y, p):
 
 
 FUNCTIONS.append(expx)
+FUNC_DESCRIPTIONS.append('EXPX')
 
 
 def sinx(x, y, p):
@@ -96,6 +114,7 @@ def sinx(x, y, p):
 
 
 FUNCTIONS.append(sinx)
+FUNC_DESCRIPTIONS.append('SINX')
 
 
 def sqrtxy(x, y, p):
@@ -103,6 +122,7 @@ def sqrtxy(x, y, p):
 
 
 FUNCTIONS.append(sqrtxy)
+FUNC_DESCRIPTIONS.append('SQRTXY')
 
 
 def acos(x, y, p):
@@ -110,6 +130,7 @@ def acos(x, y, p):
 
 
 FUNCTIONS.append(acos)
+FUNC_DESCRIPTIONS.append('ACOS')
 
 
 def asin(x, y, p):
@@ -117,6 +138,7 @@ def asin(x, y, p):
 
 
 FUNCTIONS.append(asin)
+FUNC_DESCRIPTIONS.append('ASIN')
 
 
 def atan(x, y, p):
@@ -124,3 +146,4 @@ def atan(x, y, p):
 
 
 FUNCTIONS.append(atan)
+FUNC_DESCRIPTIONS.append('ATAN')
