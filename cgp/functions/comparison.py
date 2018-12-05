@@ -52,6 +52,5 @@ def min2(x, y, p):
     return np.minimum(x, y)
 
 
-# TODO: 'FUNCTIONS.append(min2)' was missing. is this on purpose?
-# FUNCTIONS.append(min2)
-# FUNC_DESCRIPTIONS.append('MIN2')
+FUNCTIONS.append(min2)
+FUNC_DESCRIPTIONS.append('MIN2')
