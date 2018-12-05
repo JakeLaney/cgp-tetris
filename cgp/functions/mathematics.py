@@ -9,11 +9,11 @@ FUNC_DESCRIPTIONS = []
 
 
 def add(x, y, p):
-    if (is_numpy_array(x) and is_numpy_array(y)):
-        newDim = minimum_shape(x, y)
-        x = np.resize(x, newDim)
-        y = np.resize(y, newDim)
-    return x + y / 2.0
+    if is_numpy_array(x) and is_numpy_array(y):
+        new_dim = minimum_shape(x, y)
+        x = np.resize(x, new_dim)
+        y = np.resize(y, new_dim)
+    return (x + y) / 2.0
 
 
 FUNCTIONS.append(add)
@@ -21,10 +21,10 @@ FUNC_DESCRIPTIONS.append('ADD')
 
 
 def aminus(x, y, p):
-    if (is_numpy_array(x) and is_numpy_array(y)):
-        newDim = minimum_shape(x, y)
-        x = np.resize(x, newDim)
-        y = np.resize(y, newDim)
+    if is_numpy_array(x) and is_numpy_array(y):
+        new_dm = minimum_shape(x, y)
+        x = np.resize(x, new_dm)
+        y = np.resize(y, new_dm)
     return np.abs(x - y) / 2.0
 
 
@@ -33,10 +33,10 @@ FUNC_DESCRIPTIONS.append('AMINUS')
 
 
 def mult(x, y, p):
-    if (is_numpy_array(x) and is_numpy_array(y)):
-        newDim = minimum_shape(x, y)
-        x = np.resize(x, newDim)
-        y = np.resize(y, newDim)
+    if is_numpy_array(x) and is_numpy_array(y):
+        new_dim = minimum_shape(x, y)
+        x = np.resize(x, new_dim)
+        y = np.resize(y, new_dim)
     return x * y
 
 
@@ -54,15 +54,15 @@ FUNC_DESCRIPTIONS.append('CMULT')
 
 def inv(x, y, p):
     if is_numpy_array(x):
-        value = 1.0 / x
-        value[x == np.inf] = 0
-        value[x == -np.inf] = 0
-        return value
-    else:
-        if x == 0:
-            return 0
+        if np.count_nonzero(x) == 0:
+            return x
         else:
-            return 1.0 / x
+            value = 1.0 / x
+            value[x == np.inf] = 0
+            value[x == -np.inf] = 0
+            return value
+    else:
+        return x if x == 0 else 1.0 / x
 
 
 FUNCTIONS.append(inv)
@@ -86,7 +86,8 @@ FUNC_DESCRIPTIONS.append('SQRT')
 
 
 def cpow(x, y, p):
-    return np.abs(x) ** (p + 1)
+    r = np.abs(x) ** (p + 1)
+    return r
 
 
 FUNCTIONS.append(cpow)

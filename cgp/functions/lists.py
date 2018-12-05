@@ -7,6 +7,7 @@ from cgp.functions.support import minimum_shape
 FUNCTIONS = []
 FUNC_DESCRIPTIONS = []
 
+
 def split_before(x, y, p):
     if not is_numpy_array(x):
         return x
@@ -47,14 +48,19 @@ FUNCTIONS.append(range_in)
 FUNC_DESCRIPTIONS.append('RANGE_IN')
 
 
-# TODO index_y
 def index_y(x, y, p):
-    if not is_numpy_array(x):
-        return x
-    else:
-        value = (np.mean(y) + 1) / 2.0
-        index = int(np.floor(value) % x.shape[0])
+    if is_numpy_array(x) and not is_numpy_array(y):
+        index = int(np.floor((y + 1) / 2.0))
         return x[index]
+    return x
+
+# def index_y(x, y, p):
+#     if not is_numpy_array(x):
+#         return x
+#     else:
+#         value = (np.mean(y) + 1) / 2.0
+#         index = int(np.floor(value) % x.shape[0])
+#         return x[index]
 
 
 FUNCTIONS.append(index_y)
@@ -62,12 +68,18 @@ FUNC_DESCRIPTIONS.append('INDEX_Y')
 
 
 def index_p(x, y, p):
-    if not is_numpy_array(x):
-        return x
-    else:
-        value = (p + 1) / 2.0
-        index = int(np.floor(x.shape[0] * p))
+    if is_numpy_array(x):
+        index = int(np.floor((p + 1) / 2.0))
         return x[index]
+    return x
+
+# def index_p(x, y, p):
+#     if not is_numpy_array(x):
+#         return x
+#     else:
+#         value = (p + 1) / 2.0
+#         index = int(np.floor(x.shape[0] * p))
+#         return x[index]
 
 
 FUNCTIONS.append(index_p)
@@ -107,8 +119,24 @@ def f_last(x, y, p):
 FUNCTIONS.append(f_last)
 FUNC_DESCRIPTIONS.append('LAST')
 
-# TODO differences
-# TODO avg_differences
+
+def differences(x, y, p):
+    vec_x = vectorize(x, y, p)
+    vec_y = vectorize(y, x, p)
+    dxdy = np.diff(vec_x) / np.diff(vec_y)
+    return dxdy
+
+
+FUNCTIONS.append(differences)
+FUNC_DESCRIPTIONS.append('DIFFERENCES')
+
+
+def avg_differences(x, y, p):
+    return np.mean(differences(x, y, p))
+
+
+FUNCTIONS.append(avg_differences)
+FUNC_DESCRIPTIONS.append('AVG_DIFFERENCES')
 
 
 def rotate(x, y, p):
@@ -126,7 +154,7 @@ def reverse(x, y, p):
     if not is_numpy_array(x):
         return x
     else:
-        return x
+        return x[::-1]
 
 
 FUNCTIONS.append(reverse)
@@ -148,7 +176,25 @@ def push_back2(x, y, p):
 FUNCTIONS.append(push_back2)
 FUNC_DESCRIPTIONS.append('PUSH_BACK2')
 
-# TODO set(x, y, p)
+
+def set_x(x, y, p):
+    if is_numpy_array(x):
+        return x.size * y
+    return x
+
+
+FUNCTIONS.append(set_x)
+FUNC_DESCRIPTIONS.append('SET_X')
+
+
+def set_y(x, y, p):
+    if is_numpy_array(y):
+        return y.size * x
+    return y
+
+
+FUNCTIONS.append(set_y)
+FUNC_DESCRIPTIONS.append('SET_Y')
 
 
 def sum(x, y, p):
@@ -158,8 +204,27 @@ def sum(x, y, p):
 FUNCTIONS.append(sum)
 FUNC_DESCRIPTIONS.append('SUM')
 
-# TODO transpose
 # TODO vecfromdouble
+
+
+def transpose(x, y, p):
+    if is_numpy_array(x):
+        return np.transpose(x)
+    return x
+
+
+FUNCTIONS.append(transpose)
+FUNC_DESCRIPTIONS.append('TRANSPOSE')
+
+
+def vec_from_double(x, y, p):
+    if not is_numpy_array(x):
+        return np.array([x])
+    return x
+
+
+FUNCTIONS.append(vec_from_double)
+FUNC_DESCRIPTIONS.append('VEC_FROM_DOUB')
 
 
 def ywire(x, y, p):

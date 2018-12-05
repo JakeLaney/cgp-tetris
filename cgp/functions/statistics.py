@@ -9,10 +9,10 @@ FUNC_DESCRIPTIONS = []
 
 
 def stddev(x, y, p):
-    if not is_numpy_array(x):
-        return x
-    else:
+    if is_numpy_array(x):
         return np.std(x)
+    else:
+        return x
 
 
 FUNCTIONS.append(stddev)
@@ -20,10 +20,10 @@ FUNC_DESCRIPTIONS.append('STDDEV')
 
 
 def skew(x, y, p):
-    if not is_numpy_array(x):
-        return x
-    else:
+    if is_numpy_array(x):
         return scipy.stats.skew(x)
+    else:
+        return x
 
 
 FUNCTIONS.append(skew)
@@ -31,10 +31,10 @@ FUNC_DESCRIPTIONS.append('SKEW')
 
 
 def kurtosis(x, y, p):
-    if not is_numpy_array(x):
-        return x
-    else:
+    if is_numpy_array(x):
         return scipy.stats.kurtosis(x)
+    else:
+        return x
 
 
 FUNCTIONS.append(kurtosis)
@@ -50,10 +50,10 @@ FUNC_DESCRIPTIONS.append('MEAN')
 
 
 def f_range(x, y, p):
-    if not is_numpy_array(x):
-        return x
-    else:
+    if is_numpy_array(x):
         return np.max(x) - np.min(x) - 1
+    else:
+        return x
 
 
 FUNCTIONS.append(f_range)
