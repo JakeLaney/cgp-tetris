@@ -19,7 +19,7 @@ FUNCTIONS.append(split_before)
 FUNCTION_NAMES.append('SPLIT_BEFORE')
 
 def split_after(x, y, p):
-    if is_scalar(x) or not is_scalar(y):
+    if is_scalar(x):
         return x
     else:
         splitIndex = int((x.shape[0] - 1) * (p + 1) / 2.0)
@@ -40,7 +40,7 @@ FUNCTION_NAMES.append('RANGE_IN')
 
 
 def index_y(x, y, p):
-    if is_scalar(x):
+    if is_scalar(x) or not is_scalar(y):
         return x
     else:
         splitY = int((x.shape[0] - 1) * (y + 1) / 2.0)
