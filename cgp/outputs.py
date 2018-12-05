@@ -13,6 +13,10 @@ class Outputs():
         for _ in range(self.len):
             self.outputs.append(self.random_genome_index())
 
+    def load_from_list(self, outputList):
+        self.outputs = outputList
+        self.len = len(outputList)
+
     def random_genome_index(self):
         randValue = uniform(0.0, 1.0)
         index = int(round(randValue * (self.genomeSize - 1)))

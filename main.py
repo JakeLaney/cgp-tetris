@@ -22,15 +22,8 @@ FRAMES_TO_SKIP_AT_START = 75
 FRAMES_TO_SKIP_EACH_TURN = 60
 NUM_KEYS = 5
 
-
 def constrain(eightBitArray):
     return eightBitArray / 255.0
-
-
-#env = None
-#config = None
-#function_set = None
-
 
 def worker_init(rom_path: str):
     global env

@@ -15,13 +15,14 @@ class Genome:
         self.len = config.genomeSize
         self.config = config
         self.functionSet = functionSet
-        self.init_genes(config, functionSet)
+        self.genes = self.init_genes(config, functionSet)
         self.outputs = Outputs(config)
 
     def init_genes(self, config, functionSet):
-        self.genes = []
+        genes = []
         for i in range(self.len):
-            self.genes.append(Gene(config, functionSet, i))
+            genes.append(Gene(config, functionSet, i))
+        return genes
 
     def evaluate(self, *inputValues):
         self.prepare_input_genes(inputValues)
@@ -68,6 +69,10 @@ class Genome:
 
     def save_to_file(self, path):
         with open(path, 'w') as outputFile:
+            outputFile.write(str(len(self.genes)))
+            outputFile.write('\n')
+            outputFile.write(str(len(self.outputs)))
+            outputFile.write('\n')
             for gene in self.genes:
                 outputFile.write(str(gene.x))
                 outputFile.write(',')
@@ -77,17 +82,30 @@ class Genome:
                 outputFile.write(',')
                 outputFile.write(str(gene.p))
                 outputFile.write('\n')
+            for output in self.outputs:
+                outputFile.write(str(output))
+                outputFile.write('\n')
 
     def load_from_file(self, path):
         with open(path, 'r') as inputFile:
-            self.genes = []
-            index = 0
-            for row in inputFile:
-                values = row.split(',')
-                gene = Gene(self.config, self.functionSet, index)
-                gene.x = values[0]
-                gene.y = values[1]
-                gene.f = values[2]
-                gene.p = values[3]
-                self.genes.append(gene)
-                index += 1
+            numGenes = int(inputFile.readline())
+            numOutputs = int(inputFile.readline())
+
+            genes = []
+            outputs = []
+
+            for i in range(numGenes):
+                values = inputFile.readline().split(',')
+                gene = Gene(self.config, self.functionSet, i)
+                gene.x = float(values[0])
+                gene.y = float(values[1])
+                gene.f = float(values[2])
+                gene.p = float(values[3])
+                genes.append(gene)
+
+            for _ in range(numOutputs):
+                outputs.append(int(inputFile.readline()))
+
+            self.genes = genes
+            self.outputs = Outputs(self.config)
+            self.outputs.load_from_list(outputs)
