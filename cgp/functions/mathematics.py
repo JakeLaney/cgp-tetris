@@ -21,7 +21,7 @@ FUNCTION_NAMES.append('ADD')
 def aminus(x, y, p):
     if is_np(x) and is_np(y):
         new_dim = min_dim(x, y)
-        return np.abs(np.resize(x, new_dm) - np.resize(y, new_dm)) / 2.0
+        return np.abs(np.resize(x, new_dim) - np.resize(y, new_dim)) / 2.0
     return np.abs(x - y) / 2.0
 FUNCTIONS.append(aminus)
 FUNCTION_NAMES.append('AMINUS')
