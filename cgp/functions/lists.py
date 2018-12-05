@@ -34,7 +34,9 @@ def range_in(x, y, p):
     else:
         splitY = int((x.shape[0] - 1) * (y + 1) / 2.0)
         splitP = int((x.shape[0] - 1) * (p + 1) / 2.0)
-        return np.copy(x[splitY:splitP + 1])
+        start = min(splitY, splitP)
+        end = max(splitY, splitP)
+        return np.copy(x[start:end + 1])
 FUNCTIONS.append(range_in)
 FUNCTION_NAMES.append('RANGE_IN')
 

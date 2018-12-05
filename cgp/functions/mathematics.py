@@ -74,6 +74,9 @@ FUNCTION_NAMES.append('CPOW')
 
 
 def ypow(x, y, p):
+    if is_np(x) and is_np(y):
+        new_dim = min_dim(x, y)
+        return (np.abs(np.resize(x, new_dim)) ** np.abs(np.resize(y, new_dim)))
     return np.abs(x) ** np.abs(y)
 FUNCTIONS.append(ypow)
 FUNCTION_NAMES.append('YPOW')
@@ -92,6 +95,9 @@ FUNCTION_NAMES.append('SINX')
 
 
 def sqrtxy(x, y, p):
+    if is_np(x) and is_np(y):
+        new_dim = min_dim(x, y)
+        return np.sqrt(np.square(np.resize(x, new_dim)) + np.square(np.resize(y, new_dim))) / np.sqrt(2.0)
     return np.sqrt(np.square(x) + np.square(y)) / np.sqrt(2.0)
 FUNCTIONS.append(sqrtxy)
 FUNCTION_NAMES.append('SQRTXY')

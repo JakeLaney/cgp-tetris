@@ -60,8 +60,12 @@ class TestList(unittest.TestCase):
         act = lists.split_before(inp, 0, 0)
         self.assertEqual(exp, act)
         inp = np.array([1, 2, 3])
-        exp = np.array([1, 2])
-        act = lists.split_before(inp, 0, 0)
+        exp = np.array([1])
+        act = lists.split_before(inp, 0, -1.0)
+        self.assertTrue(np.array_equal(exp, act))
+        inp = np.array([1, 2, 3])
+        exp = np.array([1, 2, 3])
+        act = lists.split_before(inp, 0, 1.0)
         self.assertTrue(np.array_equal(exp, act))
 
     def test_split_after(self):
@@ -74,8 +78,12 @@ class TestList(unittest.TestCase):
         act = lists.split_after(inp, 0, 0)
         self.assertEqual(exp, act)
         inp = np.array([1, 2, 3])
-        exp = np.array([2, 3])
-        act = lists.split_after(inp, 0, 0)
+        exp = np.array([1, 2, 3])
+        act = lists.split_after(inp, 0, -1.0)
+        self.assertTrue(np.array_equal(exp, act))
+        inp = np.array([1, 2, 3])
+        exp = np.array([3])
+        act = lists.split_after(inp, 0, 1.0)
         self.assertTrue(np.array_equal(exp, act))
 
     def test_range_in(self):
@@ -93,7 +101,11 @@ class TestList(unittest.TestCase):
         self.assertTrue(np.array_equal(exp, act))
         inp = np.array([1, 2, 3])
         exp = np.array([1, 2, 3])
-        act = lists.range_in(inp, -1, 1)
+        act = lists.range_in(inp, -1.0, 1.0)
+        self.assertTrue(np.array_equal(exp, act))
+        inp = np.array([1, 2, 3])
+        exp = np.array([1, 2, 3])
+        act = lists.range_in(inp, 1, -1)
         self.assertTrue(np.array_equal(exp, act))
 
     def test_index_y(self):
