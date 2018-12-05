@@ -1,23 +1,26 @@
 
 from numpy import ndarray
 
+def is_scalar(obj):
+    return not is_np(obj)
 
-def is_numpy_array(arr):
+def is_matrix(obj):
+    return hasattr(type(obj), '__len__') and hasattr(type(obj), '__getitem__')
+
+def is_np(arr):
     return type(arr) == ndarray and arr.ndim != 0
 
+def min_dim(a, b):
+    aDims = len(a.shape)
+    bDims = len(b.shape)
 
-def minimum_shape(numpyA, numpyB):
-    # print('shape: ', numpyA.shape, numpyA, type(numpyA))
-    aR, aC = numpyA.shape
-    bR, bC = numpyB.shape
-    minR = minimum(aR, bR)
-    minC = minimum(aC, bC)
-    return (minR, minC)
+    minDims = []
 
-
-def minimum(a, b):
-    if a < b:
-        return a
+    if aDims < bDims:
+        for i in range(aDims):
+            minDims.append(min(a.shape[i], b.shape[i]))
     else:
-        return b
+        for i in range(bDims):
+            minDims.append(min(a.shape[i], b.shape[i]))
 
+    return minDims
