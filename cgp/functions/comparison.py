@@ -5,52 +5,34 @@ from cgp.functions.support import is_np
 from cgp.functions.support import min_dim
 
 FUNCTIONS = []
-FUNC_DESCRIPTIONS = []
+FUNCTION_NAMES = []
 
 
 def lt(x, y, p):
     if is_np(x) and is_np(y):
         new_dim = min_dim(x, y)
-        x = np.resize(x, new_dim)
-        y = np.resize(y, new_dim)
+        return np.resize(x, new_dim) < np.resize(y, new_dim)
     return x < y
-
-
 FUNCTIONS.append(lt)
-FUNC_DESCRIPTIONS.append('LT')
+FUNCTION_NAMES.append('LT')
 
 
 def gt(x, y, p):
     if is_np(x) and is_np(y):
-        new_dum = min_dim(x, y)
-        x = np.resize(x, new_dum)
-        y = np.resize(y, new_dum)
+        new_dim = min_dim(x, y)
+        return np.resize(x, new_dim) > np.resize(y, new_dim)
     return x > y
-
-
 FUNCTIONS.append(gt)
-FUNC_DESCRIPTIONS.append('GT')
+FUNCTION_NAMES.append('GT')
 
 
 def max2(x, y, p):
-    if is_np(x) and is_np(y):
-        new_dim = min_dim(x, y)
-        x = np.resize(x, new_dim)
-        y = np.resize(y, new_dim)
-    return np.maximum(x, y)
-
-
+    return np.max([np.max(x), np.max(y)])
 FUNCTIONS.append(max2)
-FUNC_DESCRIPTIONS.append('MAX2')
+FUNCTION_NAMES.append('MAX2')
 
 
 def min2(x, y, p):
-    if is_np(x) and is_np(y):
-        new_dim = min_dim(x, y)
-        x = np.resize(x, new_dim)
-        y = np.resize(y, new_dim)
-    return np.minimum(x, y)
-
-
+        return np.min([np.min(x), np.min(y)])
 FUNCTIONS.append(min2)
-FUNC_DESCRIPTIONS.append('MIN2')
+FUNCTION_NAMES.append('MIN2')

@@ -5,7 +5,7 @@ from cgp.functions.support import is_np
 from cgp.functions.support import min_dim
 
 FUNCTIONS =[]
-FUNC_DESCRIPTIONS = []
+FUNCTION_NAMES = []
 
 
 def stddev(x, y, p):
@@ -13,10 +13,8 @@ def stddev(x, y, p):
         return np.std(x)
     else:
         return x
-
-
 FUNCTIONS.append(stddev)
-FUNC_DESCRIPTIONS.append('STDDEV')
+FUNCTION_NAMES.append('STDDEV')
 
 
 def skew(x, y, p):
@@ -24,10 +22,8 @@ def skew(x, y, p):
         return scipy.stats.skew(x)
     else:
         return x
-
-
 FUNCTIONS.append(skew)
-FUNC_DESCRIPTIONS.append('SKEW')
+FUNCTION_NAMES.append('SKEW')
 
 
 def kurtosis(x, y, p):
@@ -35,18 +31,14 @@ def kurtosis(x, y, p):
         return scipy.stats.kurtosis(x)
     else:
         return x
-
-
 FUNCTIONS.append(kurtosis)
-FUNC_DESCRIPTIONS.append('KURTOSIS')
+FUNCTION_NAMES.append('KURTOSIS')
 
 
 def mean(x, y, p):
     return np.mean(x)
-
-
 FUNCTIONS.append(mean)
-FUNC_DESCRIPTIONS.append('MEAN')
+FUNCTION_NAMES.append('MEAN')
 
 
 def f_range(x, y, p):
@@ -54,39 +46,33 @@ def f_range(x, y, p):
         return np.max(x) - np.min(x) - 1
     else:
         return x
-
-
 FUNCTIONS.append(f_range)
-FUNC_DESCRIPTIONS.append('RANGE')
+FUNCTION_NAMES.append('RANGE')
 
 
 def f_round(x, y, p):
     return np.round(x)
-
-
 FUNCTIONS.append(f_round)
-FUNC_DESCRIPTIONS.append('ROUND')
+FUNCTION_NAMES.append('ROUND')
 
 
 def f_floor(x, y, p):
     return np.floor(x)
-
-
 FUNCTIONS.append(f_floor)
-FUNC_DESCRIPTIONS.append('FLOOR')
+FUNCTION_NAMES.append('FLOOR')
+
+def f_ceil(x, y, p):
+    return np.ceil(x)
+FUNCTIONS.append(f_ceil)
+FUNCTION_NAMES.append('CEIL')
 
 
 def max1(x, y, p):
     return np.max(x)
-
-
 FUNCTIONS.append(max1)
-FUNC_DESCRIPTIONS.append('MAX1')
-
+FUNCTION_NAMES.append('MAX1')
 
 def min1(x, y, p):
     return np.min(x)
-
-
 FUNCTIONS.append(min1)
-FUNC_DESCRIPTIONS.append('MIN1')
+FUNCTION_NAMES.append('MIN1')
