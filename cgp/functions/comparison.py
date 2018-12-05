@@ -1,57 +1,38 @@
 import numpy as np
 import scipy.stats
 
-from cgp.functions.support import is_numpy_array
-from cgp.functions.support import minimum_shape
+from cgp.functions.support import is_np
+from cgp.functions.support import min_dim
 
 FUNCTIONS = []
-FUNC_DESCRIPTIONS = []
+FUNCTION_NAMES = []
 
 
 def lt(x, y, p):
-    if (is_numpy_array(x) and is_numpy_array(y)):
-        newDim = minimum_shape(x, y)
-        x = np.resize(x, newDim)
-        y = np.resize(y, newDim)
+    if is_np(x) and is_np(y):
+        new_dim = min_dim(x, y)
+        return np.resize(x, new_dim) < np.resize(y, new_dim)
     return x < y
-
-
 FUNCTIONS.append(lt)
-FUNC_DESCRIPTIONS.append('LT')
+FUNCTION_NAMES.append('LT')
 
 
 def gt(x, y, p):
-    if (is_numpy_array(x) and is_numpy_array(y)):
-        newDim = minimum_shape(x, y)
-        x = np.resize(x, newDim)
-        y = np.resize(y, newDim)
+    if is_np(x) and is_np(y):
+        new_dim = min_dim(x, y)
+        return np.resize(x, new_dim) > np.resize(y, new_dim)
     return x > y
-
-
 FUNCTIONS.append(gt)
-FUNC_DESCRIPTIONS.append('GT')
+FUNCTION_NAMES.append('GT')
 
 
 def max2(x, y, p):
-    if (is_numpy_array(x) and is_numpy_array(y)):
-        newDim = minimum_shape(x, y)
-        x = np.resize(x, newDim)
-        y = np.resize(y, newDim)
-    return np.maximum(x, y)
-
-
+    return np.max([np.max(x), np.max(y)])
 FUNCTIONS.append(max2)
-FUNC_DESCRIPTIONS.append('MAX2')
+FUNCTION_NAMES.append('MAX2')
 
 
 def min2(x, y, p):
-    if (is_numpy_array(x) and is_numpy_array(y)):
-        newDim = minimum_shape(x, y)
-        x = np.resize(x, newDim)
-        y = np.resize(y, newDim)
-    return np.minimum(x, y)
-
-
-# TODO: 'FUNCTIONS.append(min2)' was missing. is this on purpose?
-# FUNCTIONS.append(min2)
-# FUNC_DESCRIPTIONS.append('MIN2')
+        return np.min([np.min(x), np.min(y)])
+FUNCTIONS.append(min2)
+FUNCTION_NAMES.append('MIN2')

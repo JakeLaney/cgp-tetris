@@ -13,10 +13,10 @@ class FunctionSet():
         self.functions += cgp.functions.statistics.FUNCTIONS
 
         self.function_descriptions = []
-        self.function_descriptions += cgp.functions.mathematics.FUNC_DESCRIPTIONS
-        self.function_descriptions += cgp.functions.lists.FUNC_DESCRIPTIONS
-        self.function_descriptions += cgp.functions.comparison.FUNC_DESCRIPTIONS
-        self.function_descriptions += cgp.functions.statistics.FUNC_DESCRIPTIONS
+        self.function_descriptions += cgp.functions.mathematics.FUNCTION_NAMES
+        self.function_descriptions += cgp.functions.lists.FUNCTION_NAMES
+        self.function_descriptions += cgp.functions.comparison.FUNCTION_NAMES
+        self.function_descriptions += cgp.functions.statistics.FUNCTION_NAMES
 
     def __getitem__(self, index):
         return self.functions[index]
