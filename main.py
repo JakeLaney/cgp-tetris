@@ -15,61 +15,58 @@ import numpy.random
 from PIL import Image
 import matplotlib.pyplot as plt
 
-from tetris_learning_environment import Environment
-from tetris_learning_environment import Key
-import tetris_learning_environment.gym as gym
+# from tetris_learning_environment import Environment
+# from tetris_learning_environment import Key
+# import tetris_learning_environment.gym as gym
 
 from cgp import functional_graph
 
 import signal
 import time
 
-FRAME_SKIP = 60
-INDIVIDUALS = 1000
+import gym
 
-def worker_init(rom_path):
+INDIVIDUALS = 100
+
+def worker_init():
     global env
     global function_set
     global config
-    env = gym.TetrisEnvironment(rom_path, frame_skip=FRAME_SKIP, reward_type=gym.Metric.LINES)
-    function_set = FunctionSet()
-    config = Config()
-    config.inputs = 3
-    config.outputs = len(gym.Action) # because we have booleans
-    config.functionGenes = 40
+    env = gym.make('MountainCar-v0')
 
 def play_game(genome):
-    pixels = env.reset()
+    observation = env.reset()
     done = False
     rewardSum = 0
     while not done:
-        rPixels = pixels[:,:,0] / 255.0
-        gPixels = pixels[:,:,1] / 255.0
-        bPixels = pixels[:,:,2] / 255.0
-        output = genome.evaluate(rPixels, gPixels, bPixels)
+        output = genome.evaluate(observation[0] / 1.2, observation[1] / 1.2)
         action = np.argmax(output)
-        pixels, reward, done, info = env.step(action)
+        observation, reward, done, info = env.step(action)
         rewardSum += reward
+    return (genome, rewardSum)
 
+def run(env, genome):
+    observation = env.reset()
+    done = False
+    rewardSum = 0
+    while not done:
+        env.render()
+        output = genome.evaluate(observation[0] / 1.2, observation[1] / 1.2)
+        action = np.argmax(output)
+        observation, reward, done, info = env.step(action)
+        rewardSum += reward
     return (genome, rewardSum)
 
 
 def main():
-    if len(sys.argv) < 2:
-        print("Missing rom path argument.")
-        return
-
-    tetris_rom_path = sys.argv[1]
-
     functionSet = FunctionSet()
 
     config = Config()
-    config.inputs = 3
-    config.outputs = len(gym.Action) # because we have booleans
-    config.functionGenes = 40
+    config.inputs = 2
+    config.outputs = 3 # because we have booleans
     config.generations = int(INDIVIDUALS / config.childrenPerGeneration)
 
-    bestScore = 0
+    bestScore = -200
 
     global elite
 
@@ -77,7 +74,7 @@ def main():
 
     print('Starting CGP for ' + str(config.generations) + ' generations...')
 
-    with Pool(processes=4, initializer=worker_init, initargs=(tetris_rom_path,)) as pool:
+    with Pool(processes=4, initializer=worker_init, initargs=()) as pool:
 
         for generation in range(config.generations):
             start = timer()
@@ -103,7 +100,13 @@ def main():
     print("FINISHED")
     print(bestScore)
 
+    env = gym.make('MountainCar-v0')
+    while True:
+        print(run(env, elite)[1])
+
     finish()
+
+
 
 def finish():
     if elite is not None:

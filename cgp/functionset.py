@@ -8,9 +8,9 @@ class FunctionSet():
     def __init__(self):
         self.functions = []
         self.functions += cgp.functions.mathematics.FUNCTIONS
-        self.functions += cgp.functions.lists.FUNCTIONS
+        #self.functions += cgp.functions.lists.FUNCTIONS
         self.functions += cgp.functions.comparison.FUNCTIONS
-        self.functions += cgp.functions.statistics.FUNCTIONS
+        #self.functions += cgp.functions.statistics.FUNCTIONS
 
         self.function_descriptions = []
         self.function_descriptions += cgp.functions.mathematics.FUNCTION_NAMES
