@@ -21,11 +21,11 @@ import tetris_learning_environment.gym as gym
 
 from cgp import functional_graph
 
+import signal
+import time
+
 FRAME_SKIP = 60
 INDIVIDUALS = 1000
-
-def constrain(eightBitArray):
-    return eightBitArray / 255.0
 
 def worker_init(rom_path):
     global env
@@ -38,15 +38,14 @@ def worker_init(rom_path):
     config.outputs = len(gym.Action) # because we have booleans
     config.functionGenes = 40
 
-
 def play_game(genome):
     pixels = env.reset()
     done = False
     rewardSum = 0
     while not done:
-        rPixels = constrain((pixels >> 24) & 255)
-        gPixels = constrain((pixels >> 16) & 255)
-        bPixels = constrain((pixels >> 8) & 255)
+        rPixels = pixels[:,:,0] / 255.0
+        gPixels = pixels[:,:,1] / 255.0
+        bPixels = pixels[:,:,2] / 255.0
         output = genome.evaluate(rPixels, gPixels, bPixels)
         action = np.argmax(output)
         pixels, reward, done, info = env.step(action)
@@ -71,6 +70,9 @@ def main():
     config.generations = int(INDIVIDUALS / config.childrenPerGeneration)
 
     bestScore = 0
+
+    global elite
+
     elite = Genome(config, functionSet)
 
     print('Starting CGP for ' + str(config.generations) + ' generations...')
@@ -101,8 +103,19 @@ def main():
     print("FINISHED")
     print(bestScore)
 
-    graph = functional_graph.FunctionalGraph(elite)
-    graph.draw(0)
+    finish()
+
+def finish():
+    if elite is not None:
+        elite.save_to_file('elite.out')
+        # graph = functional_graph.FunctionalGraph(elite)
+        # graph.draw(0)
+    exit()
+
+def sigint_handler(signum, frame):
+    finish()
+
+signal.signal(signal.SIGINT, sigint_handler)
 
 if __name__ == '__main__':
     main()

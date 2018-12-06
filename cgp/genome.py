@@ -34,7 +34,6 @@ class Genome:
             self.genes[inputIdx].init_as_input_gene(input)
 
     def evaluate_function_genes(self):
-
         for i in self.functionGeneRange():
             self.genes[i].prepare_for_evaluation()
 
