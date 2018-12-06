@@ -24,33 +24,35 @@ from cgp import functional_graph
 import signal
 import time
 
-FRAME_SKIP = 60
+FRAME_SKIP = 1000
 INDIVIDUALS = 1000
+DOWNSAMPLE = 8
+
+CONFIG = Config()
+CONFIG.inputs = 3
+CONFIG.outputs = len(gym.Action) # because we have booleans
+CONFIG.functionGenes = 40
+CONFIG.childrenPerGeneration = 4
+CONFIG.generations = int(INDIVIDUALS / CONFIG.childrenPerGeneration)
+
+FUNCTION_SET = FunctionSet()
 
 def worker_init(rom_path):
     global env
-    global function_set
-    global config
-    env = gym.TetrisEnvironment(rom_path, frame_skip=FRAME_SKIP, reward_type=gym.Metric.LINES)
-    function_set = FunctionSet()
-    config = Config()
-    config.inputs = 3
-    config.outputs = len(gym.Action) # because we have booleans
-    config.functionGenes = 40
+    env = gym.TetrisEnvironment(rom_path, frame_skip=FRAME_SKIP)
 
 def play_game(genome):
     pixels = env.reset()
     done = False
     rewardSum = 0
     while not done:
-        rPixels = pixels[:,:,0] / 255.0
-        gPixels = pixels[:,:,1] / 255.0
-        bPixels = pixels[:,:,2] / 255.0
+        rPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,0] / 255.0
+        gPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,1] / 255.0
+        bPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,2] / 255.0
         output = genome.evaluate(rPixels, gPixels, bPixels)
         action = np.argmax(output)
         pixels, reward, done, info = env.step(action)
         rewardSum += reward
-
     return (genome, rewardSum)
 
 
@@ -61,30 +63,19 @@ def main():
 
     tetris_rom_path = sys.argv[1]
 
-    functionSet = FunctionSet()
-
-    config = Config()
-    config.inputs = 3
-    config.outputs = len(gym.Action) # because we have booleans
-    config.functionGenes = 40
-    config.generations = int(INDIVIDUALS / config.childrenPerGeneration)
-
     bestScore = 0
 
     global elite
+    elite = Genome(CONFIG, FUNCTION_SET)
 
-    elite = Genome(config, functionSet)
-
-    print('Starting CGP for ' + str(config.generations) + ' generations...')
+    print('Starting CGP for ' + str(CONFIG.generations) + ' generations...')
 
     with Pool(processes=4, initializer=worker_init, initargs=(tetris_rom_path,)) as pool:
-
-        for generation in range(config.generations):
+        for generation in range(CONFIG.generations):
             start = timer()
 
-            genomes = [elite.get_child() for _ in range(config.childrenPerGeneration)]
-
-            results = [pool.apply_async(play_game, args=(genome,)) for genome in genomes]
+            children = [elite.get_child() for _ in range(CONFIG.childrenPerGeneration)]
+            results = [pool.apply_async(play_game, args=(child,)) for child in children]
             results = [result.get() for result in results]
 
             for (genome, score) in results:
@@ -93,15 +84,16 @@ def main():
                     elite = genome
 
             end = timer()
+
             timeElapsed = end - start
-            estimatedTimeSec = timeElapsed * (config.generations + 1 - generation)
+            estimatedTimeSec = timeElapsed * (CONFIG.generations + 1 - generation)
             estimatedTimeMin = estimatedTimeSec / 60.0
 
-            print('Generation ' + str(generation + 1) + ' of ' + str(config.generations) + ' complete, current best score = ', bestScore)
+            print('Generation ' + str(generation + 1) + ' of ' + str(CONFIG.generations) + ' complete, current best score = ', bestScore)
             print('Est. minutes remaining: ' + str(estimatedTimeMin))
 
     print("FINISHED")
-    print(bestScore)
+    print('Best Score: ', bestScore)
 
     finish()
 
