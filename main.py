@@ -17,12 +17,11 @@ import matplotlib.pyplot as plt
 
 from tetris_learning_environment import Environment
 from tetris_learning_environment import Key
+import tetris_learning_environment.gym as gym
 
 from cgp import functional_graph
 
-FRAMES_TO_SKIP_AT_START = 75
-FRAMES_TO_SKIP_EACH_TURN = 60
-NUM_KEYS = 5
+FRAME_SKIP = 60
 INDIVIDUALS = 1000
 
 def constrain(eightBitArray):
@@ -32,38 +31,28 @@ def worker_init(rom_path):
     global env
     global function_set
     global config
-    env = Environment(rom_path)
+    env = gym.TetrisEnvironment(rom_path, frame_skip=FRAME_SKIP, reward_type=gym.Metric.LINES)
     function_set = FunctionSet()
     config = Config()
     config.inputs = 3
-    config.outputs = NUM_KEYS * 2  # because we have booleans
+    config.outputs = len(gym.Action) # because we have booleans
     config.functionGenes = 40
 
 
 def play_game(genome):
-    key_presses = [False] * int(config.outputs / 2)
-    env.start_episode()
-    for _ in range(FRAMES_TO_SKIP_AT_START):
-        env.run_frame()
-
-    while env.is_running():
-        pixels = np.array(env.get_pixels())
-        pixels = pixels.reshape((env.HEIGHT, env.WIDTH))
+    pixels = env.reset()
+    done = False
+    rewardSum = 0
+    while not done:
         rPixels = constrain((pixels >> 24) & 255)
         gPixels = constrain((pixels >> 16) & 255)
         bPixels = constrain((pixels >> 8) & 255)
-
         output = genome.evaluate(rPixels, gPixels, bPixels)
+        action = np.argmax(output)
+        pixels, reward, done, info = env.step(action)
+        rewardSum += reward
 
-        for i in range(NUM_KEYS):
-            shouldPressKey = output[i] > output[i + 1]
-            env.set_key_state(i + 1, shouldPressKey)
-            key_presses[i] = shouldPressKey
-        for _ in range(FRAMES_TO_SKIP_EACH_TURN):
-            env.run_frame()
-
-    score = env.get_score()
-    return (genome, score)
+    return (genome, rewardSum)
 
 
 def main():
@@ -77,7 +66,7 @@ def main():
 
     config = Config()
     config.inputs = 3
-    config.outputs = NUM_KEYS * 2 # because we have booleans
+    config.outputs = len(gym.Action) # because we have booleans
     config.functionGenes = 40
     config.generations = int(INDIVIDUALS / config.childrenPerGeneration)
 
