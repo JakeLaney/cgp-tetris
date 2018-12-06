@@ -3,6 +3,8 @@
 import sys
 from multiprocessing import Pool
 
+from timeit import default_timer as timer
+
 from config import Config
 from cgp.functionset import FunctionSet
 from cgp.genome import Genome
@@ -21,11 +23,12 @@ from cgp import functional_graph
 FRAMES_TO_SKIP_AT_START = 75
 FRAMES_TO_SKIP_EACH_TURN = 60
 NUM_KEYS = 5
+INDIVIDUALS = 1000
 
 def constrain(eightBitArray):
     return eightBitArray / 255.0
 
-def worker_init(rom_path: str):
+def worker_init(rom_path):
     global env
     global function_set
     global config
@@ -37,7 +40,7 @@ def worker_init(rom_path: str):
     config.functionGenes = 40
 
 
-def play_game(genome: Genome):
+def play_game(genome):
     key_presses = [False] * int(config.outputs / 2)
     env.start_episode()
     for _ in range(FRAMES_TO_SKIP_AT_START):
@@ -60,9 +63,8 @@ def play_game(genome: Genome):
             env.run_frame()
 
     score = env.get_score()
-    print("score: ", score)
-
     return (genome, score)
+
 
 def main():
     if len(sys.argv) < 2:
@@ -72,34 +74,46 @@ def main():
     tetris_rom_path = sys.argv[1]
 
     functionSet = FunctionSet()
+
     config = Config()
     config.inputs = 3
     config.outputs = NUM_KEYS * 2 # because we have booleans
     config.functionGenes = 40
-    keyPresses = [False] * int(config.outputs / 2)
+    config.generations = int(INDIVIDUALS / config.childrenPerGeneration)
 
-    elite = Genome(config, functionSet)
     bestScore = 0
+    elite = Genome(config, functionSet)
+
+    print('Starting CGP for ' + str(config.generations) + ' generations...')
 
     with Pool(processes=4, initializer=worker_init, initargs=(tetris_rom_path,)) as pool:
 
         for generation in range(config.generations):
+            start = timer()
+
             genomes = [elite.get_child() for _ in range(config.childrenPerGeneration)]
 
             results = [pool.apply_async(play_game, args=(genome,)) for genome in genomes]
             results = [result.get() for result in results]
+
             for (genome, score) in results:
                 if score > bestScore:
                     bestScore = score
                     elite = genome
 
-            print('Generation ' + str(generation + 1) + ' end, current best score = ', bestScore)
+            end = timer()
+            timeElapsed = end - start
+            estimatedTimeSec = timeElapsed * (config.generations + 1 - generation)
+            estimatedTimeMin = estimatedTimeSec / 60.0
+
+            print('Generation ' + str(generation + 1) + ' of ' + str(config.generations) + ' complete, current best score = ', bestScore)
+            print('Est. minutes remaining: ' + str(estimatedTimeMin))
+
     print("FINISHED")
     print(bestScore)
 
     graph = functional_graph.FunctionalGraph(elite)
     graph.draw(0)
-
 
 if __name__ == '__main__':
     main()
