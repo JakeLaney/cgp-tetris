@@ -57,16 +57,18 @@ def play_game(genome):
     return (genome, avg)
 
 def run(env, genome):
-    observation = env.reset()
-    done = False
     rewardSum = 0
-    while not done:
-        env.render()
-        output = genome.evaluate(observation[0] / 1.2, observation[1] / 1.2)
-        action = np.argmax(output)
-        observation, reward, done, info = env.step(action)
-        rewardSum += reward
-    return (genome, rewardSum)
+    for _ in range(100):
+        observation = env.reset()
+        done = False
+        while not done:
+            output = genome.evaluate(observation[0] / 1.2, observation[1] / 1.2)
+            action = np.argmax(output)
+            observation, reward, done, info = env.step(action)
+            rewardSum += reward
+    avg = rewardSum / 100.0
+    print(avg)
+    return (genome, avg)
 
 
 def main():
@@ -86,7 +88,7 @@ def main():
 
         #for generation in range(config.generations):
         generation = 0
-        while bestScore < -110:
+        while bestScore < -100:
             generation += 1
             start = timer()
 
