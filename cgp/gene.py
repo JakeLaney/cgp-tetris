@@ -13,6 +13,7 @@ class Gene:
         self.n = index
         self.fraction = self.n / float(config.genomeSize + config.inputs)
         self.output = 0
+        self.active = False
         self.mutate()
 
         # used in functionset.py to keep track of which genes have been used
@@ -22,6 +23,7 @@ class Gene:
         return uniform(0.0, 1.0)
 
     def mutate(self):
+        self.output = 0
         self.x = self.rand()
         self.y = self.rand()
         self.f = self.rand()
@@ -60,7 +62,7 @@ class Gene:
         self.output = inputValue
 
     def prepare_for_evaluation(self):
-        self.output = 0
+        self.active = False
 
     def evaluate(self, x, y, p):
         function = self.get_function()
