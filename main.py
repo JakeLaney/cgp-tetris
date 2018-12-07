@@ -21,9 +21,9 @@ from cgp import functional_graph
 import signal
 import time
 
-FRAME_SKIP = 1000
-INDIVIDUALS = 1000
-DOWNSAMPLE = 8
+FRAME_SKIP = 15
+INDIVIDUALS = 10000
+DOWNSAMPLE = 2
 
 CONFIG = Config()
 CONFIG.inputs = 3
@@ -76,7 +76,7 @@ def main():
             results = [result.get() for result in results]
 
             for (genome, score) in results:
-                if score > bestScore:
+                if score >= bestScore:
                     bestScore = score
                     elite = genome
 
