@@ -12,9 +12,6 @@ from cgp.genome import Genome
 import numpy as np
 import numpy.random
 
-from PIL import Image
-import matplotlib.pyplot as plt
-
 from tetris_learning_environment import Environment
 from tetris_learning_environment import Key
 import tetris_learning_environment.gym as gym
