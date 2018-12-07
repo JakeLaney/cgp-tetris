@@ -52,7 +52,7 @@ def play_game(genome):
         output = genome.evaluate(rPixels, gPixels, bPixels)
         action = np.argmax(output)
         pixels, reward, done, info = env.step(action)
-        rewardSum += reward
+        rewardSum += reward + 1
     return (genome, rewardSum)
 
 
