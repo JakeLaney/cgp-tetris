@@ -94,7 +94,10 @@ def differences(x, y, p):
         return x
     else:
         z = x.flatten()
-        return np.copy(np.diff(x.flatten()))
+        if z.size > 2:
+            return np.copy(np.diff(x.flatten()))
+        else:
+            return z
 FUNCTIONS.append(differences)
 FUNCTION_NAMES.append('DIFFERENCES')
 

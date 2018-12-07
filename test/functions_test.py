@@ -55,14 +55,17 @@ class TestList(unittest.TestCase):
         exp = 1
         act = lists.split_before(inp, 0, 0)
         self.assertEqual(exp, act)
+
         inp = np.array([1])
         exp = 1
         act = lists.split_before(inp, 0, 0)
         self.assertEqual(exp, act)
+
         inp = np.array([1, 2, 3])
         exp = np.array([1])
         act = lists.split_before(inp, 0, -1.0)
         self.assertTrue(np.array_equal(exp, act))
+
         inp = np.array([1, 2, 3])
         exp = np.array([1, 2, 3])
         act = lists.split_before(inp, 0, 1.0)
@@ -73,14 +76,17 @@ class TestList(unittest.TestCase):
         exp = 1
         act = lists.split_after(inp, 0, 0)
         self.assertEqual(exp, act)
+
         inp = np.array([1])
         exp = 1
-        act = lists.split_after(inp, 0, 0)
+        act = lists.split_after(inp, 0, -1.0)
         self.assertEqual(exp, act)
+
         inp = np.array([1, 2, 3])
         exp = np.array([1, 2, 3])
         act = lists.split_after(inp, 0, -1.0)
         self.assertTrue(np.array_equal(exp, act))
+
         inp = np.array([1, 2, 3])
         exp = np.array([3])
         act = lists.split_after(inp, 0, 1.0)
@@ -91,18 +97,22 @@ class TestList(unittest.TestCase):
         exp = 1
         act = lists.range_in(inp, 0, 0)
         self.assertEqual(exp, act)
+
         inp = np.array([1])
         exp = 1
         act = lists.range_in(inp, 0, 0)
         self.assertEqual(exp, act)
+
         inp = np.array([1, 2, 3])
         exp = np.array([2])
         act = lists.range_in(inp, 0, 0)
         self.assertTrue(np.array_equal(exp, act))
+
         inp = np.array([1, 2, 3])
         exp = np.array([1, 2, 3])
         act = lists.range_in(inp, -1.0, 1.0)
         self.assertTrue(np.array_equal(exp, act))
+
         inp = np.array([1, 2, 3])
         exp = np.array([1, 2, 3])
         act = lists.range_in(inp, 1, -1)
@@ -149,6 +159,7 @@ class TestList(unittest.TestCase):
         exp = 1
         act = lists.vectorize(inp, 0, 0)
         self.assertEqual(exp, act)
+
         inp = np.array([1])
         exp = 1
         act = lists.vectorize(inp, 0, 0)

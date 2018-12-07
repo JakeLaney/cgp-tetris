@@ -33,23 +33,34 @@ class Genome:
         for inputIdx, input in enumerate(inputValues):
             self.genes[inputIdx].init_as_input_gene(input)
 
-    def evaluate_function_genes(self):
+    def mark_active_genes(self):
+        for index in self.outputs:
+            self.mark_active_genes_recursive(index)
 
+    def mark_active_genes_recursive(self, index):
+        gene = self.genes[index]
+        if not gene.active:
+            gene.active = True
+            self.mark_active_genes_recursive(gene.get_x())
+            self.mark_active_genes_recursive(gene.get_y())
+
+    def evaluate_function_genes(self):
         for i in self.functionGeneRange():
             self.genes[i].prepare_for_evaluation()
 
+        self.mark_active_genes()
+        
         for i in self.functionGeneRange():
             gene = self.genes[i]
-            xOutput = self.genes[gene.get_x()].output
-            yOutput = self.genes[gene.get_y()].output
-            pOutput = gene.get_p()
-            gene.evaluate(xOutput, yOutput, pOutput)
+            if gene.active:
+                xOutput = self.genes[gene.get_x()].output
+                yOutput = self.genes[gene.get_y()].output
+                pOutput = gene.get_p()
+                gene.evaluate(xOutput, yOutput, pOutput)
 
         result = []
         for outputIndex in self.outputs:
             output = self.genes[outputIndex].output
-            if np.array(output).size == 0:
-                output = 0
             result.append(np.mean(output))
 
         return result

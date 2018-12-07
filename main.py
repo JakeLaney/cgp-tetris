@@ -3,6 +3,8 @@
 import sys
 from multiprocessing import Pool
 
+from timeit import default_timer as timer
+
 from config import Config
 from cgp.functionset import FunctionSet
 from cgp.genome import Genome
@@ -10,59 +12,46 @@ from cgp.genome import Genome
 import numpy as np
 import numpy.random
 
-from PIL import Image
-import matplotlib.pyplot as plt
-
 from tetris_learning_environment import Environment
 from tetris_learning_environment import Key
+import tetris_learning_environment.gym as gym
 
 from cgp import functional_graph
 
-FRAMES_TO_SKIP_AT_START = 75
-FRAMES_TO_SKIP_EACH_TURN = 60
-NUM_KEYS = 5
+import signal
+import time
 
-def constrain(eightBitArray):
-    return eightBitArray / 255.0
+FRAME_SKIP = 15
+INDIVIDUALS = 10000
+DOWNSAMPLE = 2
 
-def worker_init(rom_path: str):
+CONFIG = Config()
+CONFIG.inputs = 3
+CONFIG.outputs = len(gym.Action) # because we have booleans
+CONFIG.functionGenes = 40
+CONFIG.childrenPerGeneration = 4
+CONFIG.generations = int(INDIVIDUALS / CONFIG.childrenPerGeneration)
+
+FUNCTION_SET = FunctionSet()
+
+def worker_init(rom_path):
     global env
-    global function_set
-    global config
-    env = Environment(rom_path)
-    function_set = FunctionSet()
-    config = Config()
-    config.inputs = 3
-    config.outputs = NUM_KEYS * 2  # because we have booleans
-    config.functionGenes = 40
+    env = gym.TetrisEnvironment(rom_path, frame_skip=FRAME_SKIP)
 
-
-def play_game(genome: Genome):
-    key_presses = [False] * int(config.outputs / 2)
-    env.start_episode()
-    for _ in range(FRAMES_TO_SKIP_AT_START):
-        env.run_frame()
-
-    while env.is_running():
-        pixels = np.array(env.get_pixels())
-        pixels = pixels.reshape((env.HEIGHT, env.WIDTH))
-        rPixels = constrain((pixels >> 24) & 255)
-        gPixels = constrain((pixels >> 16) & 255)
-        bPixels = constrain((pixels >> 8) & 255)
-
+def play_game(genome):
+    pixels = env.reset()
+    done = False
+    rewardSum = 0
+    while not done:
+        rPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,0] / 255.0
+        gPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,1] / 255.0
+        bPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,2] / 255.0
         output = genome.evaluate(rPixels, gPixels, bPixels)
+        action = np.argmax(output)
+        pixels, reward, done, info = env.step(action)
+        rewardSum += reward + 1
+    return (genome, rewardSum)
 
-        for i in range(NUM_KEYS):
-            shouldPressKey = output[i] > output[i + 1]
-            env.set_key_state(i + 1, shouldPressKey)
-            key_presses[i] = shouldPressKey
-        for _ in range(FRAMES_TO_SKIP_EACH_TURN):
-            env.run_frame()
-
-    score = env.get_score()
-    print("score: ", score)
-
-    return (genome, score)
 
 def main():
     if len(sys.argv) < 2:
@@ -71,35 +60,51 @@ def main():
 
     tetris_rom_path = sys.argv[1]
 
-    functionSet = FunctionSet()
-    config = Config()
-    config.inputs = 3
-    config.outputs = NUM_KEYS * 2 # because we have booleans
-    config.functionGenes = 40
-    keyPresses = [False] * int(config.outputs / 2)
-
-    elite = Genome(config, functionSet)
     bestScore = 0
 
+    global elite
+    elite = Genome(CONFIG, FUNCTION_SET)
+
+    print('Starting CGP for ' + str(CONFIG.generations) + ' generations...')
+
     with Pool(processes=4, initializer=worker_init, initargs=(tetris_rom_path,)) as pool:
+        for generation in range(CONFIG.generations):
+            start = timer()
 
-        for generation in range(config.generations):
-            genomes = [elite.get_child() for _ in range(config.childrenPerGeneration)]
-
-            results = [pool.apply_async(play_game, args=(genome,)) for genome in genomes]
+            children = [elite.get_child() for _ in range(CONFIG.childrenPerGeneration)]
+            results = [pool.apply_async(play_game, args=(child,)) for child in children]
             results = [result.get() for result in results]
+
             for (genome, score) in results:
-                if score > bestScore:
+                if score >= bestScore:
                     bestScore = score
                     elite = genome
 
-            print('Generation ' + str(generation + 1) + ' end, current best score = ', bestScore)
+            end = timer()
+
+            timeElapsed = end - start
+            estimatedTimeSec = timeElapsed * (CONFIG.generations + 1 - generation)
+            estimatedTimeMin = estimatedTimeSec / 60.0
+
+            print('Generation ' + str(generation + 1) + ' of ' + str(CONFIG.generations) + ' complete, current best score = ', bestScore)
+            print('Est. minutes remaining: ' + str(estimatedTimeMin))
+
     print("FINISHED")
-    print(bestScore)
+    print('Best Score: ', bestScore)
 
-    graph = functional_graph.FunctionalGraph(elite)
-    graph.draw(0)
+    finish()
 
+def finish():
+    if elite is not None:
+        elite.save_to_file('elite.out')
+        # graph = functional_graph.FunctionalGraph(elite)
+        # graph.draw(0)
+    exit()
+
+def sigint_handler(signum, frame):
+    finish()
+
+signal.signal(signal.SIGINT, sigint_handler)
 
 if __name__ == '__main__':
     main()
