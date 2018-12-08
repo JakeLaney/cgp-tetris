@@ -12,6 +12,8 @@ from cgp.genome import Genome
 import numpy as np
 import numpy.random
 
+from random import randint
+
 from tetris_learning_environment import Environment
 from tetris_learning_environment import Key
 import tetris_learning_environment.gym as gym
@@ -21,36 +23,60 @@ from cgp import functional_graph
 import signal
 import time
 
-FRAME_SKIP = 15
-INDIVIDUALS = 10000
-DOWNSAMPLE = 2
+FRAME_SKIP = 120
+DOWNSAMPLE = 8
+PROCESSES = 1
 
 CONFIG = Config()
-CONFIG.inputs = 3
-CONFIG.outputs = len(gym.Action) # because we have booleans
-CONFIG.functionGenes = 40
-CONFIG.childrenPerGeneration = 4
-CONFIG.generations = int(INDIVIDUALS / CONFIG.childrenPerGeneration)
-
 FUNCTION_SET = FunctionSet()
 
 def worker_init(rom_path):
     global env
     env = gym.TetrisEnvironment(rom_path, frame_skip=FRAME_SKIP)
 
-def play_game(genome):
+def run_episode(genome):
     pixels = env.reset()
     done = False
     rewardSum = 0
+    actions = [0] * len(gym.Action)
     while not done:
+        rPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,0] / 255.0
+        gPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,1] / 255.0
+        bPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,2] / 255.0
+        output = genome.evaluate(rPixels, gPixels, bPixels)
+        print('output', output)
+        action = np.argmax(output)
+        actions[action] += 1
+        pixels, reward, done, info = env.step(action)
+        rewardSum += reward + 1
+    print('actions', actions, 'score', rewardSum)
+    print('####### ref:', genome.get_references(), genome.outputs.outputs)
+    return (genome, rewardSum)
+
+def render(env, genome):
+    pixels = env.reset()
+    import pygame
+    pygame.init()
+    size = (pixels.shape[1], pixels.shape[0])
+    display = pygame.display.set_mode(size)
+    pygame.display.set_caption('Tetris')
+    carryOn = True
+    clock = pygame.time.Clock()
+    done = False
+    while not done and carryOn:
+        for event in pygame.event.get(): # User did something
+            if event.type == pygame.QUIT: # If user clicked close
+                carryOn = False
+        pygame.surfarray.blit_array(display, np.flip(np.rot90(pixels), axis=0))
+        pygame.display.flip()
         rPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,0] / 255.0
         gPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,1] / 255.0
         bPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,2] / 255.0
         output = genome.evaluate(rPixels, gPixels, bPixels)
         action = np.argmax(output)
         pixels, reward, done, info = env.step(action)
-        rewardSum += reward + 1
-    return (genome, rewardSum)
+        clock.tick(60)
+    pygame.quit()
 
 
 def main():
@@ -67,18 +93,19 @@ def main():
 
     print('Starting CGP for ' + str(CONFIG.generations) + ' generations...')
 
-    with Pool(processes=4, initializer=worker_init, initargs=(tetris_rom_path,)) as pool:
+    with Pool(processes=PROCESSES, initializer=worker_init, initargs=(tetris_rom_path,)) as pool:
         for generation in range(CONFIG.generations):
             start = timer()
 
             children = [elite.get_child() for _ in range(CONFIG.childrenPerGeneration)]
-            results = [pool.apply_async(play_game, args=(child,)) for child in children]
+            results = [pool.apply_async(run_episode, args=(child,)) for child in children]
             results = [result.get() for result in results]
 
             for (genome, score) in results:
                 if score >= bestScore:
                     bestScore = score
                     elite = genome
+                    elite.save_to_file('elite.out')
 
             end = timer()
 
@@ -92,19 +119,10 @@ def main():
     print("FINISHED")
     print('Best Score: ', bestScore)
 
-    finish()
+    env = gym.TetrisEnvironment(tetris_rom_path, frame_skip=FRAME_SKIP)
+    while True:
+        render(env, elite)
 
-def finish():
-    if elite is not None:
-        elite.save_to_file('elite.out')
-        # graph = functional_graph.FunctionalGraph(elite)
-        # graph.draw(0)
-    exit()
-
-def sigint_handler(signum, frame):
-    finish()
-
-signal.signal(signal.SIGINT, sigint_handler)
 
 if __name__ == '__main__':
     main()

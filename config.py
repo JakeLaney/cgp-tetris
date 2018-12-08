@@ -4,17 +4,19 @@ class Config():
     inputs = 3
 
     # The number of output genes
-    outputs = 10
+    outputs = 3
 
     # The number of function genes
     functionGenes = 40
 
-    # The size of the genome
-    genomeSize = inputs + functionGenes
-
     # evolution hyperparameters
-    inputScalarR = 0.1
-    childrenPerGeneration = 9
-    genesMutated = 0.1
+    inputScalarR = 0.2
+    genesMutated = 0.5
     outputsMutated = 0.6
-    generations = 10
+
+    individuals = 1000
+    childrenPerGeneration = 9
+    generations = int(individuals / childrenPerGeneration)
+
+    def get_genome_size(self):
+        return self.inputs + self.functionGenes

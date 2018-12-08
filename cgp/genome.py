@@ -12,7 +12,7 @@ class Genome:
     def __init__(self, config, functionSet):
         self.inputCount = config.inputs
         self.functionGeneStartIdx  = config.inputs
-        self.len = config.genomeSize
+        self.len = config.get_genome_size()
         self.config = config
         self.functionSet = functionSet
         self.genes = self.init_genes(config, functionSet)
@@ -24,6 +24,24 @@ class Genome:
             genes.append(Gene(config, functionSet, i))
         return genes
 
+    def get_references(self):
+        for gene in self.genes:
+            gene.active = False
+        ref = [0] * self.len
+        for i in self.outputs:
+            self.ref_recursive(i, ref)
+        return ref
+
+    def ref_recursive(self, index, ref):
+        gene = self.genes[index]
+        ref[gene.n] + 1
+        if not gene.active:
+            gene.active = True
+            ref[gene.get_x()] += 1
+            ref[gene.get_y()] += 1
+            self.ref_recursive(gene.get_x(), ref)
+            self.ref_recursive(gene.get_y(), ref)
+
     def evaluate(self, *inputValues):
         self.prepare_input_genes(inputValues)
         outputList = self.evaluate_function_genes()
@@ -33,23 +51,12 @@ class Genome:
         for inputIdx, input in enumerate(inputValues):
             self.genes[inputIdx].init_as_input_gene(input)
 
-    def mark_active_genes(self):
-        for index in self.outputs:
-            self.mark_active_genes_recursive(index)
-
-    def mark_active_genes_recursive(self, index):
-        gene = self.genes[index]
-        if not gene.active:
-            gene.active = True
-            self.mark_active_genes_recursive(gene.get_x())
-            self.mark_active_genes_recursive(gene.get_y())
-
     def evaluate_function_genes(self):
         for i in self.functionGeneRange():
             self.genes[i].prepare_for_evaluation()
 
         self.mark_active_genes()
-        
+
         for i in self.functionGeneRange():
             gene = self.genes[i]
             if gene.active:
@@ -64,6 +71,17 @@ class Genome:
             result.append(np.mean(output))
 
         return result
+
+    def mark_active_genes(self):
+        for index in self.outputs:
+            self.mark_active_genes_recursive(index)
+
+    def mark_active_genes_recursive(self, index):
+        gene = self.genes[index]
+        if not gene.active:
+            gene.active = True
+            self.mark_active_genes_recursive(gene.get_x())
+            self.mark_active_genes_recursive(gene.get_y())
 
     def functionGeneRange(self):
         return range(self.functionGeneStartIdx, self.len)
