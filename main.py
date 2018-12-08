@@ -30,6 +30,7 @@ import gym
 
 INDIVIDUALS = 200
 EPSILON = 0.1
+PROCESSES = 1
 
 CONFIG = Config()
 CONFIG.inputs = 2
@@ -44,29 +45,28 @@ def worker_init():
 
 def play_game(genome):
     rewardSum = 0
-    for _ in range(5):
-        observation = env.reset()
-        done = False
-        while not done:
-            output = genome.evaluate(observation[0] / 1.2, observation[1] / 1.2)
-            action = np.argmax(output)
-            observation, reward, done, info = env.step(action)
-            rewardSum += reward
-    avg = rewardSum / 5.0
-    print(avg)
+    observation = env.reset()
+    done = False
+    while not done:
+        output = genome.evaluate(observation[0] / 1.2, observation[1] / 1.2)
+        action = np.argmax(output)
+        observation, reward, done, info = env.step(action)
+        rewardSum += reward
+    avg = rewardSum
     return (genome, avg)
 
 def run(env, genome):
     rewardSum = 0
-    for _ in range(100):
-        observation = env.reset()
-        done = False
-        while not done:
-            output = genome.evaluate(observation[0] / 1.2, observation[1] / 1.2)
-            action = np.argmax(output)
-            observation, reward, done, info = env.step(action)
-            rewardSum += reward
-    avg = rewardSum / 100.0
+    observation = env.reset()
+    done = False
+    while not done:
+        env.render()
+        output = genome.evaluate(observation[0] / 1.2, observation[1] / 1.2)
+        print('output', output)
+        action = np.argmax(output)
+        observation, reward, done, info = env.step(action)
+        rewardSum += reward
+    avg = rewardSum
     print(avg)
     return (genome, avg)
 
@@ -84,11 +84,11 @@ def main():
 
     print('Starting CGP for ' + str(config.generations) + ' generations...')
 
-    with Pool(processes=4, initializer=worker_init, initargs=()) as pool:
+    with Pool(processes=PROCESSES, initializer=worker_init, initargs=()) as pool:
 
         #for generation in range(config.generations):
         generation = 0
-        while bestScore < -100:
+        while bestScore < -130:
             generation += 1
             start = timer()
 
@@ -126,8 +126,7 @@ def main():
     print(bestScore)
 
     env = gym.make('MountainCar-v0')
-    while True:
-        print(run(env, elite)[1])
+    print(run(env, elite)[1])
 
     finish()
 

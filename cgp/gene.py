@@ -9,9 +9,9 @@ class Gene:
         self.functionSet = functionSet
         self.functionSetLen = len(functionSet)
         self.scalar = config.inputScalarR
-        self.totalGenes = config.genomeSize
+        self.totalGenes = config.get_genome_size()
         self.n = index
-        self.fraction = self.n / float(config.genomeSize + config.inputs)
+        self.fraction = self.n / float(self.totalGenes)
         self.output = 0
         self.active = False
         self.mutate()

@@ -5,7 +5,7 @@ from random import random
 class Outputs():
     def __init__(self, config):
         self.len = config.outputs
-        self.genomeSize = config.genomeSize
+        self.genomeSize = config.get_genome_size()
         self.init_outputs()
 
     def init_outputs(self):
