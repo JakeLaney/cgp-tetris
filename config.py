@@ -1,7 +1,7 @@
 
 class Config():
     # The number of input genes
-    inputs = 3
+    inputs = 1
 
     # The number of output genes
     outputs = 3
@@ -10,11 +10,11 @@ class Config():
     functionGenes = 40
 
     # evolution hyperparameters
-    inputScalarR = 0.2
-    genesMutated = 0.5
+    inputScalarR = 0.1
+    genesMutated = 0.1
     outputsMutated = 0.6
 
-    individuals = 1000
+    individuals = 10000
     childrenPerGeneration = 9
     generations = int(individuals / childrenPerGeneration)
 

@@ -25,7 +25,7 @@ import time
 
 FRAME_SKIP = 120
 DOWNSAMPLE = 8
-PROCESSES = 1
+PROCESSES = 3
 
 CONFIG = Config()
 FUNCTION_SET = FunctionSet()
@@ -38,19 +38,15 @@ def run_episode(genome):
     pixels = env.reset()
     done = False
     rewardSum = 0
-    actions = [0] * len(gym.Action)
     while not done:
-        rPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,0] / 255.0
-        gPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,1] / 255.0
-        bPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,2] / 255.0
-        output = genome.evaluate(rPixels, gPixels, bPixels)
-        print('output', output)
+        grayscale = np.sum(pixels, axis = 2) / 3.0 / 255.0 # constrained to range [0, 1]
+        #rPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,0] +
+        #gPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,1] / 255.0
+        #bPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,2] / 255.0
+        output = genome.evaluate(grayscale)
         action = np.argmax(output)
-        actions[action] += 1
         pixels, reward, done, info = env.step(action)
         rewardSum += reward + 1
-    print('actions', actions, 'score', rewardSum)
-    print('####### ref:', genome.get_references(), genome.outputs.outputs)
     return (genome, rewardSum)
 
 def render(env, genome):
@@ -122,7 +118,6 @@ def main():
     env = gym.TetrisEnvironment(tetris_rom_path, frame_skip=FRAME_SKIP)
     while True:
         render(env, elite)
-
 
 if __name__ == '__main__':
     main()
