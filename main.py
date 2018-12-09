@@ -36,7 +36,7 @@ FUNCTION_SET = FunctionSet()
 
 def worker_init(rom_path):
     global env
-    env = gym.TetrisEnvironment(rom_path, frame_skip=FRAME_SKIP)
+    env = gym.TetrisEnvironment(rom_path, frame_skip=FRAME_SKIP, reward_type=gym.Metric.LINES)
 
 GAME_MARGIN_X = 16
 GAME_HEIGHT = 144
