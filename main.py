@@ -28,6 +28,8 @@ import time
 FRAME_SKIP = 15
 PROCESSES = 4
 
+TIMESTEP_REWARD = 1
+
 CONFIG = Config()
 FUNCTION_SET = FunctionSet()
 
@@ -35,8 +37,21 @@ def worker_init(rom_path):
     global env
     env = gym.TetrisEnvironment(rom_path, frame_skip=FRAME_SKIP)
 
-def downsample(pixels):
-    return np.mean(pixels[::8, ::8, :]) / 255.0
+GAME_MARGIN_X = 16
+GAME_HEIGHT = 144
+GAME_WIDTH = 80
+
+GRID_HEIGHT = 18
+GRID_WIDTH = 10
+
+# a simple tile grid, 255 if a tile is present, 0 if not
+def get_grid(pixels):
+    grid = np.mean(pixels, axis=2)
+    grid = grid[0:GAME_HEIGHT:8, GAME_MARGIN_X:GAME_MARGIN_X+GAME_WIDTH:8]
+    result = np.zeros(grid.shape)
+    result[grid > 200] = 0.0
+    result[grid <= 200] = 1.0
+    return result
 
 def run_episode(env, genome):
     pixels = env.reset()
@@ -44,15 +59,20 @@ def run_episode(env, genome):
     rewardSum = 0
     lastValue = 0
     currentValue = 0
+    actions = [0] * 6
     while not done:
-        grayscale = downsample(pixels)
-        output = genome.evaluate(grayscale)
+        grid = get_grid(pixels)
+        output = genome.evaluate(grid)
         action = np.argmax(output)
-        pixels, _, done, _ = env.step(action)
+        actions[action] += 1
+        pixels, lines, done, _ = env.step(action)
         currentValue = estimate_value(pixels)
         reward = currentValue - lastValue
-        lastValue = currentValue 
+        lastValue = currentValue
         rewardSum += reward
+        rewardSum += TIMESTEP_REWARD
+        rewardSum += 100 * lines
+    print('####', actions, rewardSum)
     return (genome, rewardSum)
 
 def main():
@@ -70,7 +90,8 @@ def main():
         elite.load_from_file(sys.argv[2])
 
     print('Starting CGP for ' + str(CONFIG.generations) + ' generations...')
-    env = gym.TetrisEnvironment(tetris_rom_path, frame_skip=FRAME_SKIP)
+    
+    env = gym.TetrisEnvironment(tetris_rom_path, frame_skip=FRAME_SKIP, reward_type=gym.Metric.LINES)
 
     for generation in range(CONFIG.generations):
         start = timer()
