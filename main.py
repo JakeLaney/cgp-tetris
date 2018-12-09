@@ -38,20 +38,20 @@ def worker_init(rom_path):
 def downsample(pixels):
     return np.mean(pixels[::8, ::8, :]) / 255.0
 
-def run_episode(genome):
+def run_episode(env, genome):
     pixels = env.reset()
     done = False
     rewardSum = 0
-    last = 0
-    next = 0
+    lastValue = 0
+    currentValue = 0
     while not done:
         grayscale = downsample(pixels)
         output = genome.evaluate(grayscale)
         action = np.argmax(output)
         pixels, _, done, _ = env.step(action)
-        next = estimate_value(pixels)
-        reward = next - last
-        last = next
+        currentValue = estimate_value(pixels)
+        reward = currentValue - lastValue
+        lastValue = currentValue 
         rewardSum += reward
     return (genome, rewardSum)
 
@@ -62,7 +62,7 @@ def main():
 
     tetris_rom_path = sys.argv[1]
 
-    bestScore = 0
+    bestScore = -100000
 
     global elite
     elite = Genome(CONFIG, FUNCTION_SET)
@@ -70,29 +70,28 @@ def main():
         elite.load_from_file(sys.argv[2])
 
     print('Starting CGP for ' + str(CONFIG.generations) + ' generations...')
+    env = gym.TetrisEnvironment(tetris_rom_path, frame_skip=FRAME_SKIP)
 
-    with Pool(processes=PROCESSES, initializer=worker_init, initargs=(tetris_rom_path,)) as pool:
-        for generation in range(CONFIG.generations):
-            start = timer()
+    for generation in range(CONFIG.generations):
+        start = timer()
 
-            children = [elite.get_child() for _ in range(CONFIG.childrenPerGeneration)]
-            results = [pool.apply_async(run_episode, args=(child,)) for child in children]
-            results = [result.get() for result in results]
+        children = [elite.get_child() for _ in range(CONFIG.childrenPerGeneration)]
+        results = [run_episode(env, child)for child in children]
 
-            for (genome, score) in results:
-                if score >= bestScore:
-                    bestScore = score
-                    elite = genome
-                    elite.save_to_file('elite.out')
+        for (genome, score) in results:
+            if score >= bestScore:
+                bestScore = score
+                elite = genome
+                elite.save_to_file('elite.out')
 
-            end = timer()
+        end = timer()
 
-            timeElapsed = end - start
-            estimatedTimeSec = timeElapsed * (CONFIG.generations + 1 - generation)
-            estimatedTimeMin = estimatedTimeSec / 60.0
+        timeElapsed = end - start
+        estimatedTimeSec = timeElapsed * (CONFIG.generations + 1 - generation)
+        estimatedTimeMin = estimatedTimeSec / 60.0
 
-            print('Generation ' + str(generation + 1) + ' of ' + str(CONFIG.generations) + ' complete, current best score = ', bestScore)
-            print('Est. minutes remaining: ' + str(estimatedTimeMin))
+        print('Generation ' + str(generation + 1) + ' of ' + str(CONFIG.generations) + ' complete, current best score = ', bestScore)
+        print('Est. minutes remaining: ' + str(estimatedTimeMin))
 
     print("FINISHED")
     print('Best Score: ', bestScore)
