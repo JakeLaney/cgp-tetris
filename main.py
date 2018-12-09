@@ -65,13 +65,14 @@ def run_episode(env, genome):
         action = np.argmax(output)
         actions[action] += 1
         pixels, lines, done, _ = env.step(action)
+        # the heuristic reward
         currentValue = estimate_value(pixels)
         reward = currentValue - lastValue
         lastValue = currentValue
         rewardSum += reward
-        rewardSum += TIMESTEP_REWARD
+        #rewardSum += TIMESTEP_REWARD
         if action > 0:
-            reward -= 0.01
+            rewardSum -= 0.01
     print('####', actions, rewardSum)
     return (genome, rewardSum)
 

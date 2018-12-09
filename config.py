@@ -7,7 +7,7 @@ class Config():
     outputs = 6
 
     # The number of function genes
-    functionGenes = 10
+    functionGenes = 40
 
     # evolution hyperparameters
     inputScalarR = 0.2
