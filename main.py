@@ -50,7 +50,7 @@ def run_episode(genome):
         action = np.argmax(output)
         pixels, _, done, _ = env.step(action)
         next = estimate_value(pixels)
-        reward = last - next
+        reward = next - last
         last = next
         rewardSum += reward
     return (genome, rewardSum)
