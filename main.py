@@ -26,7 +26,7 @@ import signal
 import time
 
 FRAME_SKIP = 15
-PROCESSES = 8
+PROCESSES = 4
 
 TIMESTEP_REWARD = 1
 
