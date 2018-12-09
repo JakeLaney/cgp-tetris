@@ -25,10 +25,9 @@ from cgp import functional_graph
 import signal
 import time
 
-FRAME_SKIP = 15
-PROCESSES = 4
+FRAME_SKIP = 60
 
-TIMESTEP_REWARD = 1
+TIMESTEP_REWARD = 0.1
 
 CONFIG = Config()
 FUNCTION_SET = FunctionSet()
@@ -71,7 +70,8 @@ def run_episode(env, genome):
         lastValue = currentValue
         rewardSum += reward
         rewardSum += TIMESTEP_REWARD
-        rewardSum += 100 * lines
+        if action > 0:
+            reward -= 0.01
     print('####', actions, rewardSum)
     return (genome, rewardSum)
 
@@ -90,7 +90,7 @@ def main():
         elite.load_from_file(sys.argv[2])
 
     print('Starting CGP for ' + str(CONFIG.generations) + ' generations...')
-    
+
     env = gym.TetrisEnvironment(tetris_rom_path, frame_skip=FRAME_SKIP, reward_type=gym.Metric.LINES)
 
     for generation in range(CONFIG.generations):
