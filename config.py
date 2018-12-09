@@ -4,7 +4,7 @@ class Config():
     inputs = 1
 
     # The number of output genes
-    outputs = 3
+    outputs = 6
 
     # The number of function genes
     functionGenes = 40

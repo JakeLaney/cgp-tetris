@@ -18,6 +18,8 @@ from tetris_learning_environment import Environment
 from tetris_learning_environment import Key
 import tetris_learning_environment.gym as gym
 
+from heuristic import estimate_value
+
 from cgp import functional_graph
 
 import signal
@@ -40,7 +42,7 @@ def render(env, genome):
     carryOn = True
     clock = pygame.time.Clock()
     done = False
-
+    last = 0
     actions = [0] * 6
     while not done and carryOn:
         for event in pygame.event.get(): # User did something
@@ -48,6 +50,10 @@ def render(env, genome):
                 carryOn = False
         pygame.surfarray.blit_array(display, np.flip(np.rot90(pixels), axis=0))
         pygame.display.flip()
+        next = estimate_value(pixels)
+        reward = last - next
+        last = next
+        print('reward', reward)
         rPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,0] / 255.0
         gPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,1] / 255.0
         bPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,2] / 255.0
@@ -78,7 +84,7 @@ def main():
     env = gym.TetrisEnvironment(tetris_rom_path, frame_skip=FRAME_SKIP)
 
     elite = Genome(CONFIG, FUNCTION_SET)
-    elite.load_from_file('elite.out')
+    #elite.load_from_file('elite.out')
 
     while True:
         render(env, elite)

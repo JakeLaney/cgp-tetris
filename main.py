@@ -18,6 +18,8 @@ from tetris_learning_environment import Environment
 from tetris_learning_environment import Key
 import tetris_learning_environment.gym as gym
 
+from heuristic import estimate_value
+
 from cgp import functional_graph
 
 import signal
@@ -34,19 +36,27 @@ def worker_init(rom_path):
     global env
     env = gym.TetrisEnvironment(rom_path, frame_skip=FRAME_SKIP)
 
+def downsample(pixels):
+    return np.mean(pixels[::8, ::8, :]) / 255.0
+
 def run_episode(genome):
     pixels = env.reset()
     done = False
     rewardSum = 0
+    last = 0
+    next = 0
     while not done:
-        grayscale = np.sum(pixels, axis = 2) / 3.0 / 255.0 # constrained to range [0, 1]
+        grayscale = downsample(pixels)
         #rPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,0] +
         #gPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,1] / 255.0
         #bPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,2] / 255.0
         output = genome.evaluate(grayscale)
         action = np.argmax(output)
-        pixels, reward, done, info = env.step(action)
-        rewardSum += reward + 1
+        pixels, _, done, _ = env.step(action)
+        next = estimate_value(pixels)
+        reward = last - next
+        last = next
+        rewardSum += reward
     return (genome, rewardSum)
 
 def render(env, genome):
