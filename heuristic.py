@@ -50,17 +50,6 @@ def get_column_heights(grid):
         heights.append(height)
     return np.array(heights)
 
-# because I don't have the actual coordinates of the
-# moving piece, I will estimate lines cleared if all
-# suspended tiles dropped down
-def estimate_complete_lines(grid):
-    rows = [0] * GRID_HEIGHT
-    for x in range(GRID_WIDTH):
-        for y in range(GRID_HEIGHT):
-            if grid[y][x] == B:
-                rows[y] += 1
-    return rows.count(GRID_WIDTH)
-
 def get_holes(grid, heights):
     total = 0
     for x in range(GRID_WIDTH):
@@ -71,18 +60,55 @@ def get_holes(grid, heights):
                 total += 1
     return total
 
+def get_complete_lines(grid):
+    count = 0
+    for r in range(GRID_HEIGHT):
+        complete = True
+        for c in range(GRID_WIDTH):
+            if grid[r][c] == W:
+                complete = False
+        if complete:
+            count += 1
+    return count
+
+def drop(grid, r, c, dist):
+    grid[r][c] = W
+    grid[r + dist][c] = B
+
+def drop_tiles(grid):
+    #grid = get_grid(pixels)
+    noFloatGrid = remove_floating_tile(grid)
+    diff = grid - noFloatGrid
+    rawCoords = np.nonzero(diff)
+    coords = []
+
+    # get all tile coordinates
+    for i in range(len(rawCoords[0])):
+        coords.append((rawCoords[0][i], rawCoords[1][i]))
+
+    # get the max distance to drop a tile
+    heights = get_column_heights(noFloatGrid)
+    maxDist = 1000
+    for coordinate in coords:
+        dist = GRID_HEIGHT - heights[coordinate[1]] - coordinate[0] - 1
+        if dist < maxDist:
+            maxDist = dist
+
+    # drop the tiles
+    for coordinate in coords:
+        drop(grid, coordinate[0], coordinate[1], maxDist)
+
+
 # heuristic value formula presented by:
 # **** https://codemyroad.wordpress.com/2013/04/14/tetris-ai-the-near-perfect-player/
 def estimate_value(pixels):
     grid = get_grid(pixels)
-    noFloatGrid = remove_floating_tile(grid)
-
-    heights = get_column_heights(noFloatGrid)
+    drop_tiles(grid)
+    heights = get_column_heights(grid)
     aggHeight = heights.sum()
     bumpiness = np.sum(np.abs(np.diff(heights)))
-    holes = get_holes(noFloatGrid, heights)
-    completeLines = estimate_complete_lines(grid)
-
+    holes = get_holes(grid, heights)
+    completeLines = get_complete_lines(grid)
 
     reward = -0.51006 * aggHeight + 0.760666 * completeLines + -0.35663 * holes + -0.184483 * bumpiness
 

@@ -61,6 +61,7 @@ def render(env, genome):
         action = np.argmax(output)
         #act = randint(0,5)
         actions[action] += 1
+        print(estimate_value(pixels))
         pixels, reward, done, info = env.step(action)
         clock.tick(60)
     print(actions)
