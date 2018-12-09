@@ -25,9 +25,7 @@ from cgp import functional_graph
 import signal
 import time
 
-FRAME_SKIP = 120
-INDIVIDUALS = 1000
-DOWNSAMPLE = 8
+FRAME_SKIP = 15
 
 CONFIG = Config()
 FUNCTION_SET = FunctionSet()
@@ -44,6 +42,7 @@ def render(env, genome):
     done = False
     last = 0
     actions = [0] * 6
+    rewardSum = 0
     while not done and carryOn:
         for event in pygame.event.get(): # User did something
             if event.type == pygame.QUIT: # If user clicked close
@@ -53,27 +52,26 @@ def render(env, genome):
         next = estimate_value(pixels)
         reward = last - next
         last = next
-        print('reward', reward)
-        rPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,0] / 255.0
-        gPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,1] / 255.0
-        bPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,2] / 255.0
+        rewardSum += reward
+        #print('reward', reward)
+        rPixels = pixels[::8,::8,0] / 255.0
+        gPixels = pixels[::8,::8,1] / 255.0
+        bPixels = pixels[::8,::8,2] / 255.0
         output = genome.evaluate(rPixels, gPixels, bPixels)
         action = np.argmax(output)
-        act = randint(0,5)
-        actions[act] += 1
-        pixels, reward, done, info = env.step(act)
+        #act = randint(0,5)
+        actions[action] += 1
+        pixels, reward, done, info = env.step(action)
         clock.tick(60)
     print(actions)
+    print('reward sum', rewardSum)
     pygame.quit()
-
-
 
 def graph(elite):
     from cgp.functional_graph import FunctionalGraph
     graph = FunctionalGraph(elite)
     for i in range(3):
         graph.draw(0)
-
 
 def main():
     if len(sys.argv) < 2:
@@ -84,7 +82,7 @@ def main():
     env = gym.TetrisEnvironment(tetris_rom_path, frame_skip=FRAME_SKIP)
 
     elite = Genome(CONFIG, FUNCTION_SET)
-    #elite.load_from_file('elite.out')
+    elite.load_from_file(sys.argv[2])
 
     while True:
         render(env, elite)

@@ -25,9 +25,8 @@ from cgp import functional_graph
 import signal
 import time
 
-FRAME_SKIP = 120
-DOWNSAMPLE = 8
-PROCESSES = 3
+FRAME_SKIP = 15
+PROCESSES = 4
 
 CONFIG = Config()
 FUNCTION_SET = FunctionSet()
@@ -47,9 +46,6 @@ def run_episode(genome):
     next = 0
     while not done:
         grayscale = downsample(pixels)
-        #rPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,0] +
-        #gPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,1] / 255.0
-        #bPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,2] / 255.0
         output = genome.evaluate(grayscale)
         action = np.argmax(output)
         pixels, _, done, _ = env.step(action)
@@ -58,32 +54,6 @@ def run_episode(genome):
         last = next
         rewardSum += reward
     return (genome, rewardSum)
-
-def render(env, genome):
-    pixels = env.reset()
-    import pygame
-    pygame.init()
-    size = (pixels.shape[1], pixels.shape[0])
-    display = pygame.display.set_mode(size)
-    pygame.display.set_caption('Tetris')
-    carryOn = True
-    clock = pygame.time.Clock()
-    done = False
-    while not done and carryOn:
-        for event in pygame.event.get(): # User did something
-            if event.type == pygame.QUIT: # If user clicked close
-                carryOn = False
-        pygame.surfarray.blit_array(display, np.flip(np.rot90(pixels), axis=0))
-        pygame.display.flip()
-        rPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,0] / 255.0
-        gPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,1] / 255.0
-        bPixels = pixels[::DOWNSAMPLE,::DOWNSAMPLE,2] / 255.0
-        output = genome.evaluate(rPixels, gPixels, bPixels)
-        action = np.argmax(output)
-        pixels, reward, done, info = env.step(action)
-        clock.tick(60)
-    pygame.quit()
-
 
 def main():
     if len(sys.argv) < 2:
@@ -96,6 +66,8 @@ def main():
 
     global elite
     elite = Genome(CONFIG, FUNCTION_SET)
+    if len(sys.argv) == 3:
+        elite.load_from_file(sys.argv[2])
 
     print('Starting CGP for ' + str(CONFIG.generations) + ' generations...')
 
@@ -124,10 +96,6 @@ def main():
 
     print("FINISHED")
     print('Best Score: ', bestScore)
-
-    env = gym.TetrisEnvironment(tetris_rom_path, frame_skip=FRAME_SKIP)
-    while True:
-        render(env, elite)
 
 if __name__ == '__main__':
     main()

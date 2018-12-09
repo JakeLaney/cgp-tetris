@@ -15,7 +15,7 @@ class Config():
     outputsMutated = 0.6
 
     individuals = 10000
-    childrenPerGeneration = 9
+    childrenPerGeneration = 8
     generations = int(individuals / childrenPerGeneration)
 
     def get_genome_size(self):
