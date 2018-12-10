@@ -50,8 +50,8 @@ def inv(x, y, p):
         return out
     else:
         return x if x == 0 else 1.0 / x
-FUNCTIONS.append(inv)
-FUNCTION_NAMES.append('INV')
+#FUNCTIONS.append(inv)
+#FUNCTION_NAMES.append('INV')
 
 
 def abs(x, y, p):
