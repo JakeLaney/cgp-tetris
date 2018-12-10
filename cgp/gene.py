@@ -3,6 +3,8 @@ from math import floor
 from random import random
 from random import randint
 import numpy as np
+from cgp.functions.support import is_scalar
+from cgp.functions.support import is_np
 
 class Gene:
     def __init__(self, config, index):
@@ -79,17 +81,14 @@ class Gene:
         self.output = self.constrain_result(p * function(x, y, p))
 
     def constrain_result(self, result):
-        constrainedResult = np.array(result)
-        originalShape = constrainedResult.shape
-        constrainedResult = constrainedResult.flatten()
-        for i in range(constrainedResult.size):
-            constrainedResult[i] = self.constrain_bounds(constrainedResult[i])
-        return constrainedResult.reshape(originalShape)
-
-    def constrain_bounds(self, e):
-        if (e > 1.0):
-            return 1.0
-        elif e < -1.0:
-            return -1.0
+        if is_scalar(result):
+            if result > 1.0:
+                return 1.0
+            elif result < -1.0:
+                return -1.0
+            else:
+                return result
         else:
-            return e
+            result[result > 1.0] = 1.0
+            result[result < -1.0] = -1.0
+            return result

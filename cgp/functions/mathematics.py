@@ -78,8 +78,8 @@ def ypow(x, y, p):
         new_dim = min_dim(x, y)
         return (np.abs(np.resize(x, new_dim)) ** np.abs(np.resize(y, new_dim)))
     return np.abs(x) ** np.abs(y)
-FUNCTIONS.append(ypow)
-FUNCTION_NAMES.append('YPOW')
+#FUNCTIONS.append(ypow) # TODO REMOVING FOR REASONS OF SANITY
+#FUNCTION_NAMES.append('YPOW')
 
 
 def expx(x, y, p):

@@ -19,7 +19,7 @@ class TrainingEnvironment:
         for generation in range(cgpConfig.generations):
             startTime = timer()
 
-            #elite.update_children(children)
+            elite.update_children(children)
 
             results = []
             for child in children:
@@ -29,7 +29,7 @@ class TrainingEnvironment:
             for (genome, score) in results:
                 if score >= bestScore:
                     bestScore = score
-                    #genome.copy_into(elite)
+                    genome.copy_into(elite)
 
             endTime = timer()
 
