@@ -4,7 +4,6 @@ import sys
 
 import configurations.tetris_config
 from cgp.training_environment import TrainingEnvironment
-from cgp.trainer.tetris_trainer import TetrisTrainer
 
 def main():
     if len(sys.argv) < 2:
@@ -14,14 +13,13 @@ def main():
         modelFile = sys.argv[2]
         shouldLoadFromFile = True
 
-    cgpConfig = configurations.tetris_config.TetrisConfig()
     romPath = sys.argv[1]
-    trainer = TetrisTrainer(romPath)
+    cgpConfig = configurations.tetris_config.TetrisConfig(romPath)
     trainingEnv = TrainingEnvironment()
 
     print('Training Tetris CGP Model...')
 
-    elite, bestScore = trainingEnv.run(trainer, cgpConfig)
+    elite, bestScore = trainingEnv.run(cgpConfig.heuristicTrainer, cgpConfig)
 
     print('Completed with score:', bestScore)
 

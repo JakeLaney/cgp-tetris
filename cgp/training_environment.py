@@ -33,7 +33,7 @@ class TrainingEnvironment:
 
             endTime = timer()
 
-            self.log_generation(startTime, endTime, generation, cgpConfig.generations, bestScore)
+            self.log_generation(cgpConfig.modelFile, startTime, endTime, generation, cgpConfig.generations, bestScore)
             elite.save_to_file(self.OUTPUT_DIR + cgpConfig.modelFile)
 
         return (elite, bestScore)
@@ -65,7 +65,7 @@ class TrainingEnvironment:
 
             endTime = timer()
             elite.save_to_file(cgpConfig.modelFile)
-            self.log_generation(startTime, endTime, generation, cgpConfig.generations, bestScore)
+            self.log_generation(cgpConfig.modelFile, startTime, endTime, generation, cgpConfig.generations, bestScore)
 
         return (elite, bestScore)
 
@@ -85,9 +85,15 @@ class TrainingEnvironment:
     def wait(self, asyncHandles):
         return [handle.get() for handle in asyncHandles]
 
-    def log_generation(self, startTime, endTime, generation, totalGenerations, bestScore):
+    def log_generation(self, modelFile, startTime, endTime, generation, totalGenerations, bestScore):
         timeElapsed = endTime - startTime
         estimatedTimeSec = timeElapsed * (totalGenerations + 1 - generation)
         estimatedTimeMin = estimatedTimeSec / 60.0
         print('Generation ' + str(generation + 1) + ' of ' + str(totalGenerations) + ' complete, current best score = ', bestScore)
         print('Est. minutes remaining: ' + str(estimatedTimeMin))
+        with open(modelFile + '.csv', 'a') as f:
+            f.write(str(generation))
+            f.write(',')
+            f.write(str(bestScore))
+            f.write(',')
+            f.write('\n')
