@@ -34,10 +34,10 @@ class TrainingEnvironment:
             endTime = timer()
 
             self.log_generation(cgpConfig.modelFile, startTime, endTime, generation, cgpConfig.generations, bestScore)
-            elite.save_to_file(self.OUTPUT_DIR + cgpConfig.modelFile)
+            elite.save_to_file(cgpConfig.modelFile)
 
         return (elite, bestScore)
-
+    '''
     def run_parallel(self, trainer, cgpConfig, numProcesses):
         elite = Genome(cgpConfig)
         bestScore = -1000000
@@ -68,6 +68,7 @@ class TrainingEnvironment:
             self.log_generation(cgpConfig.modelFile, startTime, endTime, generation, cgpConfig.generations, bestScore)
 
         return (elite, bestScore)
+    '''
 
     def init_pool(self):
         pass
