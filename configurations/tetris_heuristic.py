@@ -69,6 +69,20 @@ def get_complete_lines(grid):
             count += 1
     return count
 
+def remove_complete_lines(grid):
+    count = 0
+    for r in range(GRID_HEIGHT):
+        complete = True
+        for c in range(GRID_WIDTH):
+            if grid[r][c] == W:
+                complete = False
+        if complete:
+            count += 1
+            for c in range(GRID_WIDTH):
+                grid[r][c] = W
+            drop_tiles(grid)
+    return count
+
 def drop(grid, r, c, dist):
     grid[r][c] = W
     grid[r + dist][c] = B
@@ -102,11 +116,11 @@ def drop_tiles(grid):
 def estimate_value(pixels, debug=False):
     grid = get_grid(pixels)
     drop_tiles(grid)
+    completeLines = remove_complete_lines(grid)
     heights = get_column_heights(grid)
     aggHeight = heights.sum()
     bumpiness = np.sum(np.abs(np.diff(heights)))
     holes = get_holes(grid, heights)
-    completeLines = get_complete_lines(grid)
 
     reward = -0.51006 * aggHeight + 0.760666 * completeLines + -0.35663 * holes + -0.184483 * bumpiness
 

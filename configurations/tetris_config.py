@@ -52,8 +52,6 @@ class HeuristicTrainer:
         currentScore = heuristic.estimate_value(pixels, debug=False)
         reward = currentScore - self.lastScore
         self.lastScore = currentScore
-        if action > 0:
-            reward -= 0.01 # try to minimize random movement
         return reward
 
 class TetrisConfig():
@@ -76,11 +74,11 @@ class TetrisConfig():
 
     # evolution hyperparameters
     inputScalarR = 0.1
-    genesMutated = 0.1
+    genesMutated = 0.4
     outputsMutated = 0.6
 
     individuals = 10000
-    childrenPerGeneration = 4
+    childrenPerGeneration = 9
     generations = int(individuals / childrenPerGeneration)
 
     def get_genome_size(self):
