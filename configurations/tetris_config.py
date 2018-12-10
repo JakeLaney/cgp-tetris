@@ -33,7 +33,7 @@ class HeuristicTrainer:
             tetrisGrid = self.downsample(pixels)
             outputVector = genome.evaluate(tetrisGrid)
             selectedAction = np.argmax(outputVector)
-            pixels, _, done, _ = env.step(0)
+            pixels, _, done, _ = env.step(selectedAction)
             sumRewards += self.heuristic_reward(tetrisGrid, selectedAction)
             actions[selectedAction] += 1
         print('####', actions, sumRewards)
