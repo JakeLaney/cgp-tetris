@@ -1,6 +1,7 @@
 #!/usr/local/bin/python3
 
 import sys
+import os
 
 import configurations.tetris_config
 from cgp.training_environment import TrainingEnvironment
@@ -16,6 +17,11 @@ def main():
     romPath = sys.argv[1]
     cgpConfig = configurations.tetris_config.TetrisConfig(romPath)
     trainingEnv = TrainingEnvironment()
+
+    try:
+        os.remove(cgpConfig.modelFile + '.csv')
+    except:
+        pass
 
     print('Training Tetris CGP Model...')
 

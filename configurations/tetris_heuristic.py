@@ -10,8 +10,6 @@ GRID_WIDTH = 10
 W = 255
 B = 0
 
-DEBUG_MODE = False
-
 # a simple tile grid, 255 if a tile is present, 0 if not
 def get_grid(pixels):
     grid = np.mean(pixels, axis=2)
@@ -101,7 +99,8 @@ def drop_tiles(grid):
 
 # heuristic value formula presented by:
 # **** https://codemyroad.wordpress.com/2013/04/14/tetris-ai-the-near-perfect-player/
-def estimate_value(grid):
+def estimate_value(pixels, debug=False):
+    grid = get_grid(pixels)
     drop_tiles(grid)
     heights = get_column_heights(grid)
     aggHeight = heights.sum()
@@ -111,7 +110,7 @@ def estimate_value(grid):
 
     reward = -0.51006 * aggHeight + 0.760666 * completeLines + -0.35663 * holes + -0.184483 * bumpiness
 
-    if DEBUG_MODE:
+    if debug:
         print('heights', heights)
         print('aggHeight', aggHeight)
         print('bumpiness', bumpiness)
@@ -130,7 +129,7 @@ def main():
     env.reset()
     for _ in range(20):
         pixels = env.step(0)[0]
-    estimate_value(pixels)
+    estimate_value(pixels, debug=True)
 
 if __name__ == '__main__':
     main()

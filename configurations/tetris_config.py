@@ -3,6 +3,7 @@ import tetris_learning_environment.gym as gym
 import configurations.tetris_heuristic as heuristic
 
 import numpy as np
+from random import randint
 
 class HeuristicTrainer:
     FRAME_SKIP = 60
@@ -33,9 +34,9 @@ class HeuristicTrainer:
             tetrisGrid = self.downsample(pixels)
             outputVector = genome.evaluate(tetrisGrid)
             selectedAction = np.argmax(outputVector)
-            pixels, _, done, _ = env.step(selectedAction)
-            sumRewards += self.heuristic_reward(tetrisGrid, selectedAction)
             actions[selectedAction] += 1
+            pixels, _, done, _ = env.step(selectedAction)
+            sumRewards += self.heuristic_reward(pixels, selectedAction)
         print('####', actions, sumRewards)
         return (genome, sumRewards)
 
@@ -47,8 +48,8 @@ class HeuristicTrainer:
         result[grid <= 200] = 1.0
         return result
 
-    def heuristic_reward(self, tetrisGrid, action):
-        currentScore = heuristic.estimate_value(tetrisGrid)
+    def heuristic_reward(self, pixels, action):
+        currentScore = heuristic.estimate_value(pixels, debug=False)
         reward = currentScore - self.lastScore
         self.lastScore = currentScore
         if action > 0:
