@@ -25,7 +25,7 @@ def main():
 
     print('Training Tetris CGP Model...')
 
-    elite, bestScore = trainingEnv.run(cgpConfig.heuristicTrainer, cgpConfig)
+    elite, bestScore = trainingEnv.run_async(cgpConfig.heuristicTrainer, cgpConfig, 4)
 
     print('Completed with score:', bestScore)
 

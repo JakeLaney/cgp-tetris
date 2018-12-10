@@ -5,7 +5,7 @@ from multiprocessing import Pool
 
 from timeit import default_timer as timer
 
-from config import Config
+from configurations import tetris_config
 from cgp.functionset import FunctionSet
 from cgp.genome import Genome
 

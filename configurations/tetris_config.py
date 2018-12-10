@@ -25,6 +25,22 @@ class HeuristicTrainer:
         env = gym.TetrisEnvironment(self.romPath, frame_skip=self.FRAME_SKIP)
         return env
 
+    def run_episode_async(self, genome):
+        env = self.get_env()
+        pixels = env.reset() # ndarray.shape is (_, _, 3) rgb
+        sumRewards = 0
+        done = False
+        actions = [0] * 6
+        while not done:
+            tetrisGrid = self.downsample(pixels)
+            outputVector = genome.evaluate(tetrisGrid)
+            selectedAction = np.argmax(outputVector)
+            actions[selectedAction] += 1
+            pixels, _, done, _ = env.step(selectedAction)
+            sumRewards += self.heuristic_reward(pixels, selectedAction)
+        print('####', actions, sumRewards)
+        return (genome, sumRewards)
+
     def run_episode(self, env, genome):
         pixels = env.reset() # ndarray.shape is (_, _, 3) rgb
         sumRewards = 0

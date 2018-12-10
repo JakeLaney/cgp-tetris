@@ -5,6 +5,9 @@ from timeit import default_timer as timer
 import time
 import copy
 
+def run_episode_async(trainer, genome):
+    return trainer.run_episode_async(genome)
+
 class TrainingEnvironment:
     OUTPUT_DIR = 'output/'
 
@@ -37,15 +40,13 @@ class TrainingEnvironment:
             elite.save_to_file(cgpConfig.modelFile)
 
         return (elite, bestScore)
-    '''
-    def run_parallel(self, trainer, cgpConfig, numProcesses):
+
+    def run_async(self, trainer, cgpConfig, numProcesses):
         elite = Genome(cgpConfig)
         bestScore = -1000000
 
         children = [Genome(cgpConfig) for _ in range(cgpConfig.childrenPerGeneration)]
         trainers = [copy.deepcopy(trainer)] * len(children)
-        envs = [trainer.get_env()] * len(children)
-
 
         for generation in range(cgpConfig.generations):
             startTime = timer()
@@ -53,14 +54,14 @@ class TrainingEnvironment:
             elite.update_children(children)
 
             pool = Pool(processes=numProcesses, initializer=self.init_pool, initargs=(), maxtasksperchild=1)
-            asyncHandles = self.run_children_async(pool, trainers, envs, children)
-            pool.close()
-            pool.join()
+            asyncHandles = self.run_children_async(pool, trainers, children)
             results = self.wait(asyncHandles)
             for (genome, score) in results:
                 if score >= bestScore:
                     bestScore = score
                     genome.copy_into(elite)
+            pool.close()
+            pool.join()
 
 
             endTime = timer()
@@ -68,7 +69,6 @@ class TrainingEnvironment:
             self.log_generation(cgpConfig.modelFile, startTime, endTime, generation, cgpConfig.generations, bestScore)
 
         return (elite, bestScore)
-    '''
 
     def init_pool(self):
         pass
@@ -76,11 +76,11 @@ class TrainingEnvironment:
     def get_children(self, genome, count):
         return [genome.get_child() for _ in range(count)]
 
-    def run_children_async(self, pool, trainers, envs, children):
+    def run_children_async(self, pool, trainers, children):
         results = []
         for i, _ in enumerate(children):
             trainers[i].reset()
-            results.append(pool.apply_async(trainers[i].run_episode, args=(envs[i], children[i])))
+            results.append(pool.apply_async(run_episode_async, args=(trainers[i], children[i])))
         return results
 
     def wait(self, asyncHandles):
