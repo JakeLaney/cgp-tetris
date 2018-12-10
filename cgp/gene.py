@@ -1,13 +1,13 @@
 
 from math import floor
-from random import uniform
+from random import random
 from random import randint
 import numpy as np
 
 class Gene:
-    def __init__(self, config, functionSet, index):
-        self.functionSet = functionSet
-        self.functionSetLen = len(functionSet)
+    def __init__(self, config, index):
+        self.functionSet = config.functionSet
+        self.functionSetLen = len(config.functionSet)
         self.scalar = config.inputScalarR
         self.totalGenes = config.get_genome_size()
         self.n = index
@@ -19,15 +19,25 @@ class Gene:
         # used in functionset.py to keep track of which genes have been used
         self.active_in_functional_graph = False
 
+    def copy_into(self, other):
+        other.n = self.n
+        other.fraction = self.fraction
+        other.output = self.output
+        other.active = self.active
+        other.x = self.x
+        other.y = self.y
+        other.f = self.f
+        other.p = self.p
+
     def rand(self):
         return uniform(0.0, 1.0)
 
     def mutate(self):
         self.output = 0
-        self.x = self.rand()
-        self.y = self.rand()
-        self.f = self.rand()
-        self.p = self.rand()
+        self.x = random()
+        self.y = random()
+        self.f = random()
+        self.p = random()
 
     def randIndex(self, array):
         return randint(0, len(array) - 1)

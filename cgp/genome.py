@@ -1,5 +1,4 @@
 
-import config
 import random
 
 import copy
@@ -9,19 +8,20 @@ from cgp.outputs import Outputs
 import numpy as np
 
 class Genome:
-    def __init__(self, config, functionSet):
+    def __init__(self, config):
         self.inputCount = config.inputs
         self.functionGeneStartIdx  = config.inputs
         self.len = config.get_genome_size()
         self.config = config
-        self.functionSet = functionSet
-        self.genes = self.init_genes(config, functionSet)
+        self.functionSet = config.functionSet
+        self.genes = self.init_genes(config)
         self.outputs = Outputs(config)
+        self.sampleSize = int(self.config.genesMutated * self.len)
 
-    def init_genes(self, config, functionSet):
+    def init_genes(self, config):
         genes = []
         for i in range(self.len):
-            genes.append(Gene(config, functionSet, i))
+            genes.append(Gene(config, i))
         return genes
 
     def get_references(self):
@@ -86,15 +86,24 @@ class Genome:
     def functionGeneRange(self):
         return range(self.functionGeneStartIdx, self.len)
 
-    def get_child(self):
-        child = copy.deepcopy(self)
-        self.mutate_four_nodes(child)
-        child.outputs.mutate()
-        return child
+    # moving to inplace list to try and resolve memory leaks
+    def update_children(self, genomes):
+        for genome in genomes:
+            self.copy_into(genome)
+            genome.mutate()
 
-    def mutate_four_nodes(self, child):
-        for gene in random.sample(child.genes, 4):
+    def copy_into(self, other):
+        other.inputCount = self.inputCount
+        other.functionGeneStartIdx  = self.functionGeneStartIdx
+        other.len = self.len
+        for i, _ in enumerate(self.genes):
+            self.genes[i].copy_into(other.genes[i])
+        self.outputs.copy_into(other.outputs)
+
+    def mutate(self):
+        for gene in random.sample(self.genes, self.sampleSize):
             gene.mutate()
+        self.outputs.mutate()
 
     def save_to_file(self, path):
         with open(path, 'w') as outputFile:

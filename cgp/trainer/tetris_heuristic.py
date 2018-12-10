@@ -101,8 +101,7 @@ def drop_tiles(grid):
 
 # heuristic value formula presented by:
 # **** https://codemyroad.wordpress.com/2013/04/14/tetris-ai-the-near-perfect-player/
-def estimate_value(pixels):
-    grid = get_grid(pixels)
+def estimate_value(grid):
     drop_tiles(grid)
     heights = get_column_heights(grid)
     aggHeight = heights.sum()

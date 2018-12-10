@@ -8,6 +8,10 @@ class Outputs():
         self.genomeSize = config.get_genome_size()
         self.init_outputs()
 
+    def copy_into(self, other):
+        for i, _ in enumerate(self.outputs):
+            other.outputs[i] = self.outputs[i]
+
     def init_outputs(self):
         self.outputs = []
         for _ in range(self.len):
