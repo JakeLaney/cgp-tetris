@@ -6,6 +6,8 @@ import os
 import configurations.tetris_config
 from cgp.training_environment import TrainingEnvironment
 
+PROCESSES = 4
+
 def main():
     if len(sys.argv) < 2:
         print("Missing rom path argument.")
@@ -25,7 +27,7 @@ def main():
 
     print('Training Tetris CGP Model...')
 
-    elite, bestScore = trainingEnv.run(cgpConfig.heuristicTrainer, cgpConfig)
+    elite, bestScore = trainingEnv.run_async(cgpConfig.heuristicTrainer, cgpConfig, PROCESSES)
 
     print('Completed with score:', bestScore)
 
