@@ -134,8 +134,8 @@ def push_back(x, y, p):
 
 def push_back2(x, y, p):
     return np.append(np.array(y).flatten(), np.array(x).flatten())
-FUNCTIONS.append(push_back2)
-FUNCTION_NAMES.append('PUSH_BACK2')
+#FUNCTIONS.append(push_back2)
+#FUNCTION_NAMES.append('PUSH_BACK2')
 
 def set_x(x, y, p):
     return np.mean(x) * np.ones(np.array(y).size)

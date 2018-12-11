@@ -134,7 +134,7 @@ class Genome:
 
             for i in range(numGenes):
                 values = inputFile.readline().split(',')
-                gene = Gene(self.config, self.functionSet, i)
+                gene = Gene(self.config, i)
                 gene.x = float(values[0])
                 gene.y = float(values[1])
                 gene.f = float(values[2])
